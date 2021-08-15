@@ -98,10 +98,11 @@ function stopError()
         <li>Username : <br><strong>'.$name.'</strong></li>
           <li></li>
         </ul>
-
         <div class="loschen">
-        <a href="deleteuser.php?name='.$name.'" >Löschen</a>
-
+            <a href="edituser.php?name='.$name.'" >Edit</a>
+        </div>
+        <div class="loschen">
+            <a href="deleteuser.php?name='.$name.'" >Löschen</a>
         </div>
 
         </div></div>
