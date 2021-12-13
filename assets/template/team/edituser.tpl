@@ -1,23 +1,4 @@
-<?php
-session_start();
-require('../assets/php/api/mysql/mysql_connetion.php');
-$name = $_GET['name'] ?? "";
-if($name===""||$name==="root"){
-    header("Location: index.php");
-}
-if(isset($_POST['edit'])){
-    mysql_connetion::query("UPDATE login SET Rang='".$_POST["rang"]."',Access='".$_POST["frac"]."' WHERE User='".$_POST["name"]."'");
-}
-
-$result=mysql_connetion::result("SELECT * FROM login WHERE User = '".$name."'");
-$rang="";
-$access="";
-while($row = mysqli_fetch_array($result)){
-    $rang = $row["Rang"];
-    $access = $row["Access"];
-}
-?>
-<html>
+<html lang="de">
 <head>
 
     <meta charset="utf-8">
@@ -70,20 +51,20 @@ while($row = mysqli_fetch_array($result)){
     </div>
     <div class="form">
         <h1>User ändern</h1>
-        <form action="edituser.php" method="POST">
+        <form action="index.php?site=edituser" method="POST">
             <div class="form-group">
                 <label for="exampleInputEmail1">Name</label>
-                <input type="text" class="form-control" name="name" placeholder="Name" required disabled value="<?=$name?>">
+                <input type="text" class="form-control" name="name" placeholder="Name" required disabled value="{name}">
             </div>
             <br>
             <div class="form-group">
                 <label for="exampleInputEmail1">Rang</label>
-                <input type="number" class="form-control" name="rang" placeholder="Rang" value="<?=$rang?>" min="0" max="1">
+                <input type="number" class="form-control" name="rang" placeholder="Rang" value="{rang}" min="0" max="1">
             </div>
             <br>
             <div class="form-group">
                 <label for="exampleInputEmail1">Fraction</label>
-                <input type="number" class="form-control" name="frac" placeholder="555" value="<?=$access?>" min="0" max="2">
+                <input type="number" class="form-control" name="frac" placeholder="555" value="{access}" min="0" max="2">
             </div>
             <br>
             <button type="submit" name="edit" class="btn btn-primary">Speichern</button>

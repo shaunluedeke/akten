@@ -94,8 +94,8 @@
                 $(".num").counterUp({delay:10,time:1000});
                 function pwandern()
                 {
-                    var breite=screen.availWidth;
-                    var hoehe=screen.availHeight;
+                    var breite=700;
+                    var hoehe=900;
                     var positionX=((screen.availWidth / 2) - breite / 2);
                     var positionY=((screen.availHeight / 2) - hoehe / 2);
                     var url='teammangagment/pwandern.php';

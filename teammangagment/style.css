@@ -4,7 +4,7 @@
   margin: 0;
   padding: 0;
   text-decoration: none;
-  font-family: montserrat;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif !important;
   box-sizing: border-box;
   color: #fff;
 }
@@ -182,4 +182,10 @@ color: #ecf0f1;
   position: absolute;
   top: 16px;
   right: -10px;
+}
+
+.btn{
+    color: #fff !important;
+    background-color: #1eec8d !important;
+    border: none !important;
 }
