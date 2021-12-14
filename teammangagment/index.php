@@ -6,6 +6,7 @@ require(__DIR__."/../assets/php/rest.php");
 $template = new template();
 $template->setTempFolder(__DIR__ . "/../assets/template/team/");
 $site = $_GET['site'] ?? "";
+$mysql = new mysql_connetion();
 if (empty($_SESSION['login']) || $_SESSION['login'] === 0) {header("Location : ../index.php");return;}
 
 switch($site){
@@ -18,7 +19,7 @@ switch($site){
         if($name === "" || $name === "root"){
             echo('<script> alert("Den User kann man nicht Löschen!");  </script>');
         }else{
-            mysql_connetion::query("DELETE FROM `login` WHERE `User` = '".$name."'");
+            $mysql->query("DELETE FROM `login` WHERE `User` = '".$name."'");
             echo('<script text="text/javascript">alert("Du hast den User gelöscht!");</script>');
         }
         header("Location: index.php");
@@ -30,10 +31,10 @@ switch($site){
             header("Location: index.php");
         }
         if(isset($_POST['edit'])){
-            mysql_connetion::query("UPDATE login SET Rang='".$_POST["rang"]."',Access='".$_POST["frac"]."' WHERE User='".$_POST["name"]."'");
+            $mysql->query("UPDATE login SET Rang='".$_POST["rang"]."',Access='".$_POST["frac"]."' WHERE User='".$_POST["name"]."'");
         }
         $template->assign("name", $name);
-        $result=mysql_connetion::result("SELECT * FROM login WHERE User = '".$name."'");
+        $result=$mysql->result("SELECT * FROM login WHERE User = '".$name."'");
         $rang="";
         $access="";
         while($row = mysqli_fetch_array($result)){
@@ -60,7 +61,7 @@ switch($site){
         if($_SESSION['access']!==0){
             $acc = " WHERE `Access` = '".$_SESSION['access']."'";
         }
-        $result=mysql_connetion::result("SELECT * FROM login".$acc);
+        $result=$mysql->result("SELECT * FROM login".$acc);
         while($row = mysqli_fetch_array($result)) {
             $account_loop = array();
             $account_loop["user"] = $row["User"];

@@ -1,7 +1,7 @@
 <?php
 session_start();
-require('../assets/php/api/mysql/mysql_connetion.php');
-
+require(__DIR__.'/../assets/php/api/mysql/mysql_connetion.php');
+$mysql = new mysql_connetion;
 if(isset($_POST['logi']))
 {
     if(empty($_POST['pwneu'])||empty($_POST['pwalt']))
@@ -14,7 +14,7 @@ if(isset($_POST['logi']))
 
     }else{
         $name = $_SESSION["username"];
-        $db_res = mysql_connetion::result("SELECT * FROM `login` WHERE `User` = '".$name."'");
+        $db_res = $mysql->result("SELECT * FROM `login` WHERE `User` = '".$name."'");
         $row = mysqli_fetch_array($db_res);
         $pwalt = md5($_POST["pwalt"]);
         $pwres=$row["PW"];

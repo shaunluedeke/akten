@@ -6,14 +6,14 @@ require("assets/php/rest.php");
 $template = new template();
 $template->setTempFolder(__DIR__ . "/assets/template/");
 $loginstatus= $_SESSION['login'] ?? 0;
-
+$mysql = new mysql_connetion();
 if($loginstatus===0) {
     if(isset($_POST['logi'])) {
         if (empty($_POST['usernam']) || empty($_POST['Passord'])) {
             ?> <script "text/javascript">alert("Du hast nicht alles eingegeben!");</script> <?php
         }else{
             $usern = $_POST['usernam'];
-            $db_res = mysql_connetion::result("SELECT * FROM `login` WHERE `User` = '".$usern."'");
+            $db_res = $mysql->result("SELECT * FROM `login` WHERE `User` = '".$usern."'");
             $row = mysqli_fetch_array($db_res);
             $pwresold = $row["PW"];
 
@@ -41,7 +41,7 @@ if($loginstatus===1){
         if((int)$_SESSION['access']!==0){
             $acc = " WHERE Access = '".$_SESSION['access']."'";
         }
-        $akten = mysqli_fetch_assoc(mysql_connetion::result("SELECT COUNT(*) AS count FROM akten".$acc))['count'] ?? 0;
+        $akten = mysqli_fetch_assoc($mysql->result("SELECT COUNT(*) AS count FROM akten".$acc))['count'] ?? 0;
         $rang = $_SESSION['rang']??0;
         $template->assign("teamsite",$rang>0);
         $template->assign("aktenansehbar", $akten!==0);
@@ -53,7 +53,7 @@ if($loginstatus===1){
         if($_SESSION['access']!==0){
             $acc = " WHERE Access = '".$_SESSION['access']."'";
         }
-        $result=mysql_connetion::result("SELECT * FROM akten".$acc);
+        $result=$mysql->result("SELECT * FROM akten".$acc);
         $i=0;
         while($row = mysqli_fetch_array($result)) {
             $fraction="Keine Fraction";
@@ -90,7 +90,7 @@ if($loginstatus===1){
         if($_SESSION['access']!==0){
             $acc = " AND Access = '".$_SESSION['access']."'";
         }
-        $result=mysql_connetion::result("SELECT * FROM akten WHERE ID = '".$name."'".$acc);
+        $result=$mysql->result("SELECT * FROM akten WHERE ID = '".$name."'".$acc);
         $isset=false;
         while($row =mysqli_fetch_array($result)){
             $template->assign("id",$row["ID"]);
@@ -118,7 +118,7 @@ if($loginstatus===1){
         if(isset($_POST["createakte"])){
             $access = $_GET['frac']==="pd" ? "1" : "0";
             $date = date("d.m.Y",strtotime($_POST["date"]));
-            mysql_connetion::query("INSERT INTO `akten`(`ID`, `Name`, `Geburtstag`, `Durchwahl`, `Datum`, `Straftat`, 
+            $mysql->query("INSERT INTO `akten`(`ID`, `Name`, `Geburtstag`, `Durchwahl`, `Datum`, `Straftat`, 
                                         `Vernehmung`, `aufklaerung`, `urteil`, `Ersteller`, `Access`)
                                          VALUES ('null','".rest::sonderzeichenentfernen($_POST["name"])."','".rest::sonderzeichenentfernen($_POST["gb"])
                                         ."','".rest::sonderzeichenentfernen($_POST["tel"])."','".$date
@@ -149,7 +149,7 @@ if($loginstatus===1){
             $template->parse("akte-delete.tpl");
         }
         if($state==="confirm"){
-            mysql_connetion::query("DELETE FROM akten WHERE ID = '".$id."'");
+            $mysql->query("DELETE FROM akten WHERE ID = '".$id."'");
             ?> <script "text/javascript">alert("Die Akte wurde gelöscht!"); </script> <?php
             header("Location: index.php?site=akten-all");
         }
@@ -162,14 +162,14 @@ if($loginstatus===1){
         }
         if(isset($_POST["editakte"])){
             $date = date("d.m.Y",strtotime($_POST["date"]));
-            mysql_connetion::query("UPDATE `akten` SET `Name`='".rest::sonderzeichenentfernen($_POST["name"])."',`Geburtstag`='".rest::sonderzeichenentfernen($_POST["gb"])
+            $mysql->query("UPDATE `akten` SET `Name`='".rest::sonderzeichenentfernen($_POST["name"])."',`Geburtstag`='".rest::sonderzeichenentfernen($_POST["gb"])
                 ."',`Durchwahl`='".rest::sonderzeichenentfernen($_POST["tel"])."',`Datum`='".$date
                 ."',`Straftat`='".rest::sonderzeichenentfernen($_POST["straftat"])."',`Vernehmung`='".rest::sonderzeichenentfernen($_POST["vernehmung"])
                 ."',`aufklaerung`='".rest::sonderzeichenentfernen($_POST["aufklaerung"])."',`urteil`='".rest::sonderzeichenentfernen($_POST["urteil"])
                 ."',`Ersteller`='".rest::sonderzeichenentfernen($_SESSION['username'])."' WHERE `ID`='".$id."'");
             header("location: index.php?site=akten-all");
         }else{
-            $result=mysql_connetion::result("SELECT * FROM akten WHERE ID = '".$id."'");
+            $result=$mysql->result("SELECT * FROM akten WHERE ID = '".$id."'");
             $isset=false;
             while($row =mysqli_fetch_array($result)){
                 $template->assign("id",$row["ID"]);

@@ -1,12 +1,12 @@
 <?php
 session_start();
-require('../assets/php/api/mysql/mysql_connetion.php');
-
+require(__DIR__.'/../assets/php/api/mysql/mysql_connetion.php');
+$mysql = new mysql_connetion;
 if(isset($_POST['logi']))
 {
   $access = $_POST['access'] ?? $_SESSION['access'];
     $usern = $_POST['usernam'];
-$db_res = mysql_connetion::result("SELECT `User` FROM `login` WHERE `User` = '".$usern."'");
+$db_res = $mysql->result("SELECT `User` FROM `login` WHERE `User` = '".$usern."'");
 $row = mysqli_fetch_array($db_res);
 $pwresold = $row["User"];
 
@@ -28,7 +28,7 @@ $pwresold = $row["User"];
     $pw = $randstring;
     $pwmd5 = md5($pw);
     $rng = $_POST['ran'];
-        mysql_connetion::query("INSERT INTO `login`(`User`, `PW`, `Rang`, `Access`) VALUES ('".$usern."','".$pwmd5."','".$rng."' , '".$access."')");
+        $mysql->query("INSERT INTO `login`(`User`, `PW`, `Rang`, `Access`) VALUES ('".$usern."','".$pwmd5."','".$rng."' , '".$access."')");
     echo '    <script "text/javascript">
     alert("Du hast den User hinzufügen! Das Password ist '.$pw.'");
     self.close();
