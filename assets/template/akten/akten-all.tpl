@@ -1,10 +1,8 @@
-?>
 <html>
 <head>
 
     <meta charset="utf-8">
-    <title>Akten Teammangagment</title>
-    <link rel="shortcut icon" type="image/png" href="/img/logo.png">
+    <title>AktenSystem</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/login/style.css">
     <link rel="stylesheet" href="assets/css/bootstap/bootstrap.min.css">
@@ -21,13 +19,10 @@
             document.getElementById('menu').style.width = '0';
             document.getElementById('content').style.marginLeft = '0';
         }
-        function openregisterclick(){
-            document.getElementById('register').style.width = '40%';
-            document.getElementById('register').style.height = '40%';
-        }
     </script>
 </head>
 <body>
+<script type="text/javascript" color="200, 0, 0" opacity="1.6" zindex="-2" count="150" src="http://www.cssscript.com/demo/interactive-particle-nest-system-with-javascript-and-canvas-canvas-nest-js/canvas-nest.js"></script><canvas id="c_n2" width="725" height="913" style="position: fixed; top: 0px; left: 0px; z-index: -2; opacity: 0.7;"></canvas>
 <div id="content">
 
     <span class="slide">
@@ -41,51 +36,72 @@
             <i class="fas fa-times"></i>
         </a>
         <a href="index.php">Home</a>
+        <a href="index.php?site=pw-edit">Password Ändern</a>
+        <a href="index.php?site=logout">Logout</a>
+
     </div>
-</div>
-<div class="inter">
-    <script type="text/javascript" color="200, 0, 0" opacity="1.6" zindex="-2" count="150" src="http://www.cssscript.com/demo/interactive-particle-nest-system-with-javascript-and-canvas-canvas-nest-js/canvas-nest.js"></script><canvas id="c_n2" width="725" height="913" style="position: fixed; top: 0px; left: 0px; z-index: -2; opacity: 0.7;"></canvas>
+    {if hasakten}
     <center>
         <h1>Webinterface von AktenSystem</h1>
-        <br>
-
-        <h2>Accounts</h2>
         <br><br><br><br><br>
-        <div class="inter" style="width: 70%;position: absolute;top: 55%;left: 50%;transform: translate(-50%, 0%);">
+        <div class="inter" style="width: 80%;position: absolute;top: 100px;left: 50%;transform: translate(-50%, 0%);">
             <table id="Table" class="table table-striped table-dark" style="width: 100%;" data-toggle="table" data-pagination="true"
                    data-search="true">
                 <thead>
                 <tr>
+                    <th scope="col" data-sortable="true" data-field="Akte">Akte</th>
                     <th scope="col" data-sortable="true" data-field="name">Name</th>
-                    <th scope="col" data-sortable="true" data-field="rang">Rang</th>
+                    <th scope="col" data-sortable="true" data-field="date">Datum</th>
+                    <th scope="col" data-sortable="true" data-field="creater">Ersteller</th>
                     <th scope="col" data-sortable="true" data-field="frac">Fraction</th>
-                    <th scope="col" data-field="open">Infos</th>
+                    <th scope="col" data-field="open">&Ouml;ffnen</th>
                 </tr>
                 </thead>
                 <tbody>
-                {loop user_loop}
+                {loop akten_loop}
                 <tr>
-                    <th scope="row">{user_loop_name}</th>
-                    <td>{user_loop_rang}</td>
-                    <td>{user_loop_fraction}</td>
-                    <td><a class="btn btn-primary" href="index.php?site=user-check&name={user_loop_name}">INFO</a></td>
+                    <th scope="row">{akten_loop_id}</th>
+                    <td>{akten_loop_name}</td>
+                    <td>{akten_loop_date}</td>
+                    <td>{akten_loop_creator}</td>
+                    <td>{akten_loop_frac}</td>
+                    <td><a class="btn btn-primary" href="index.php?site=akte&id={akten_loop_id}">Akte &Ouml;ffnen</a></td>
                 </tr>
-                {endloop user_loop}
-
+                {endloop akten_loop}
                 </tbody>
             </table>
-
         </div>
-</div>
-<footer class="bg-dark text-center text-white " style="position: fixed;bottom:0; width:100%; height:50px; padding: 7px;">
-    <a href="index.php?site=register" class="btn btn-primary">User Hinzufügen</a>
-</footer>
+            </center>
+    </div>
+    {endif hasakten}
+    {if not hasakten}
+    <div class="login-form" style="text-align: center;">
+        <h3 style="color: black">Es gibt keine Akten!</h3>
+        <br><br><br><br><br><br>
+        <a class="btn btn-danger" href="index.php">Zurück</a>
+    </div>
+    {endif not hasakten}
 
-</center>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
+<script type="text/javascript">
+    $(".num").counterUp({delay:10,time:1000});
+    function pwandern()
+    {
+        var breite=screen.availWidth;
+        var hoehe=screen.availHeight;
+        var positionX=((screen.availWidth / 2) - breite / 2);
+        var positionY=((screen.availHeight / 2) - hoehe / 2);
+        var url='teammangagment/pwandern.php';
+        pop=window.open('','PW ändern','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,fullscreen=0,width='+breite+',height='+hoehe+',top=10000,left=10000');
+        pop.blur();
+        pop.resizeTo(breite,hoehe);
+        pop.moveTo(positionX,positionY);
+        pop.location=url;
+    }
+</script>
 </body>
 </html>
