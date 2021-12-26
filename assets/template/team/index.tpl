@@ -1,17 +1,18 @@
-?>
 <html>
 <head>
 
     <meta charset="utf-8">
     <title>Akten Teammangagment</title>
-    <link rel="shortcut icon" type="image/png" href="/img/logo.png">
+    <link rel="shortcut icon" type="image/png" href="/assets/img/logo.png">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/login/style.css">
     <link rel="stylesheet" href="assets/css/bootstap/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
 
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+    <link href="assets/css/bootstap/bootstrap.min.css" rel="stylesheet">
     <script>
         function openSlideMenu(){
             document.getElementById('menu').style.width = '250px';

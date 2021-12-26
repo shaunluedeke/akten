@@ -12,20 +12,21 @@ class aktensys
         $this->main = new main();
     }
 
-    public function get(): array
+    public function get(int $fracid=0): array
     {
         $a = array();
         $mysql = $this->main->getSQL();
-        if (($this->id !== 0) && $mysql->count("SELECT `ID` FROM `akten`") < 1) {
+        if (($this->id !== 0) && $mysql->count("SELECT `ID` FROM `akten`".($fracid!==0? "WHERE `Access`='$fracid' OR `Freigabe`='$fracid'" : "")) < 1) {
             return array();
         }
-        $result = mysqli_fetch_array($mysql->result("SELECT * FROM `akten`" . ($this->id !== 0 ? " WHERE `ID`='$this->id'" : "")));
+        $result = ($mysql->result("SELECT * FROM `akten`" . ($this->id !== 0 ? " WHERE `ID`='$this->id'" : ($fracid!==0? "WHERE `Access`='$fracid' OR `Freigabe`='$fracid'"  : ""))));
         if ($this->id !== 0) {
-            while ($row = $result) {
+            while ($row = mysqli_fetch_array($result)) {
                 $id = $row['ID'];
                 $a["id"] = $id;
                 $a["name"] = $row["Name"];
-                $a["access"] = $row["Access"];
+                $a["access"] = (int)$row["Access"];
+                $a["release"] = (int)$row["Freigabe"];
                 try {
                     $a["data"] = json_decode($row["Data"], true, 512, JSON_THROW_ON_ERROR);
                 } catch (JsonException $e) {
@@ -33,11 +34,12 @@ class aktensys
                 return $a;
             }
         } else {
-            while ($row = $result) {
+            while ($row = mysqli_fetch_array($result)) {
                 $id = $row['ID'];
                 $a[$id]["id"] = $id;
                 $a[$id]["name"] = $row["Name"];
-                $a[$id]["access"] = $row["Access"];
+                $a[$id]["access"] = (int)$row["Access"];
+                $a[$id]["release"] = (int)$row["Freigabe"];
                 try {
                     $a[$id]["data"] = json_decode($row["Data"], true, 512, JSON_THROW_ON_ERROR);
                 } catch (JsonException $e) {
@@ -75,8 +77,11 @@ class aktensys
         return $id;
     }
 
-    public function update(int $id, string $name, string $date, string $creator, string $gb, string $tel, string $straftat, string $vernehmung, string $aufklarung, string $urteil): bool
+    public function update(string $name, string $date, string $creator, string $gb, string $tel, string $straftat, string $vernehmung, string $aufklarung, string $urteil): bool
     {
+        if($this->id===0){
+            return false;
+        }
         $data = array();
         $data["date"] = $date;
         $data["creator"] = $creator;
@@ -87,9 +92,16 @@ class aktensys
         $data["aufklarung"] = $aufklarung;
         $data["urteil"] = $urteil;
         try {
-            return $this->main->getSQL()->query("UPDATE `akten` SET `Name`='$name',`Data`='" . json_encode($data, JSON_THROW_ON_ERROR) . "' WHERE `ID`='$id'");
+            return $this->main->getSQL()->query("UPDATE `akten` SET `Name`='$name',`Data`='" . json_encode($data, JSON_THROW_ON_ERROR) . "' WHERE `ID`='$this->id'");
         } catch (JsonException $e) {
         }
         return false;
+    }
+
+    public function updaterelese(int $fracid):bool{
+        if($this->id===0){
+            return false;
+        }
+        return $this->main->getSQL()->query("UPDATE `akten` SET `Freigabe`='$fracid' WHERE `ID`='$fracid'");
     }
 }

@@ -9,7 +9,9 @@
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
     <link rel="stylesheet" href="assets/css/bootstap/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+    <link href="assets/css/bootstap/bootstrap.min.css" rel="stylesheet">
     <script>
         function openSlideMenu(){
             document.getElementById('menu').style.width = '250px';
@@ -136,25 +138,18 @@
             </div>
             {endif not pd}
             <br>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Freigabe für</label>
+                <select class="form-select" name="release">
+                    <option style="color: black;" {releaseselect0} value="0">Keinen</option>
+                    <option style="color: black;" {releaseselect1} value="1">LSPD</option>
+                    <option style="color: black;" {releaseselect2} value="2">LSMD</option>
+                </select>
+            </div>
+            <br>
             <button type="submit" name="editakte" class="btn btn-primary">Speichern</button>
         </form>
     </div>
 </div>
-<script type="text/javascript">
-    $(".num").counterUp({delay:10,time:1000});
-    function pwandern()
-    {
-        var breite=screen.availWidth;
-        var hoehe=screen.availHeight;
-        var positionX=((screen.availWidth / 2) - breite / 2);
-        var positionY=((screen.availHeight / 2) - hoehe / 2);
-        var url='teammangagment/pwandern.php';
-        pop=window.open('','PW ändern','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,fullscreen=0,width='+breite+',height='+hoehe+',top=10000,left=10000');
-        pop.blur();
-        pop.resizeTo(breite,hoehe);
-        pop.moveTo(positionX,positionY);
-        pop.location=url;
-    }
-</script>
 </body>
 </html>

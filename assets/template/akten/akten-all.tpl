@@ -5,11 +5,12 @@
     <title>AktenSystem</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/login/style.css">
-    <link rel="stylesheet" href="assets/css/bootstap/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
 
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+    <link href="assets/css/bootstap/bootstrap.min.css" rel="stylesheet">
     <script>
         function openSlideMenu(){
             document.getElementById('menu').style.width = '250px';
@@ -38,6 +39,7 @@
         <a href="index.php">Home</a>
         <a href="index.php?site=pw-edit">Password Ändern</a>
         <a href="index.php?site=logout">Logout</a>
+
 
     </div>
     {if hasakten}
@@ -88,19 +90,17 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
 <script type="text/javascript">
-    $(".num").counterUp({delay:10,time:1000});
-    function pwandern()
-    {
-        var breite=screen.availWidth;
-        var hoehe=screen.availHeight;
-        var positionX=((screen.availWidth / 2) - breite / 2);
-        var positionY=((screen.availHeight / 2) - hoehe / 2);
-        var url='teammangagment/pwandern.php';
-        pop=window.open('','PW ändern','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,fullscreen=0,width='+breite+',height='+hoehe+',top=10000,left=10000');
-        pop.blur();
-        pop.resizeTo(breite,hoehe);
-        pop.moveTo(positionX,positionY);
-        pop.location=url;
+
+    function togglesidebar() {
+        var sidebarbig = document.getElementById("sidebarbig");
+        var sidebarsmall = document.getElementById("sidebarsmall");
+        if(sidebarbig.classList.contains("close")){
+            sidebarbig.classList.replace("close","open");
+            sidebarsmall.classList.replace("open","close");
+        }else{
+            sidebarbig.classList.replace("open","close");
+            sidebarsmall.classList.replace("close","open");
+        }
     }
 </script>
 </body>

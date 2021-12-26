@@ -79,10 +79,11 @@
                             </figure>
                             <div class="listing">
                                 <h3>Erstelle eine Neue Akte!</h3>
-                                <h3>Was hat der schuft gemacht</h3>
+                                <h3>Was hat der Type gemacht</h3>
                                 <a href="index.php?site=akten-create" class="logbtn">Akte Erstellen</a>
                             </div>
                         </div>
+                    <br>
                     </div>
             {endif not pd}
             {if pd}

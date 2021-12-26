@@ -1,43 +1,43 @@
-<html lang="de" dir="ltr">
+<!DOCTYPE html>
+<html lang="de">
 <head>
-    <meta charset="utf-8">
-    <title>AktenSystem</title>
-    <link rel="shortcut icon" type="image/png" href="/img/logo.png">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" charset="utf-8"></script>
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="assets/css/login.css">
 </head>
 <body>
-<script type="text/javascript" color="200, 0, 0" opacity="1.6" zindex="-2" count="150" src="http://www.cssscript.com/demo/interactive-particle-nest-system-with-javascript-and-canvas-canvas-nest-js/canvas-nest.js"></script><canvas id="c_n2" width="725" height="913" style="position: fixed; top: 0px; left: 0px; z-index: -2; opacity: 0.7;"></canvas>
+<main>
 
-<form action="index.php" method="POST" class="login-form">
-    <h1>Login</h1>
-
-    <div class="txtb">
-        <input type="text" name="usernam" required>
-        <span data-placeholder="Username" ></span>
+    <div class="container">
+        <div class="d-flex justify-content-center h-100">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Login</h3>
+                </div>
+                <div class="card-body">
+                    <br />
+                    <form action="index.php" method="post">
+                        <div class="input-group form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <input type="text" class="form-control" name="usernam" required placeholder="username">
+                        </div>
+                        <div class="input-group form-group">
+                            <div class="input-group-prepend hover" onclick="togglepw()">
+                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            </div>
+                            <input type="password" id="pw" class="form-control" name="Passord" required placeholder="password">
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Login" name="logi" class="btn float-right login_btn">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="txtb">
-        <input type="password" name="Passord" required>
-        <span data-placeholder="Password"></span>
-    </div>
-
-    <input type="submit" class="logbtn" name ="logi" value="Login">
-
-
-
-</form>
-
-<script type="text/javascript">
-    $(".txtb input").on("focus",function(){
-        $(this).addClass("focus");
-    });
-    $(".txtb input").on("blur",function(){
-        if($(this).val() == "")
-            $(this).removeClass("focus");
-    });
-</script>
-
-
+</main>
 </body>
 </html>
