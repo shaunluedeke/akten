@@ -87,7 +87,7 @@
             <button type="submit" name="createakte" class="btn btn-primary">Speichern</button>
         </form>
         <br><br><br>
-        <h1>Neue MD Akte erstellen</h1>
+        <h1>Neue MC Akte erstellen</h1>
         <form action="index.php?site=akten-create&frac=md" method="POST">
             <div class="form-group">
                 <label for="exampleInputEmail1">Name</label>

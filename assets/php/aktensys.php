@@ -12,6 +12,11 @@ class aktensys
         $this->main = new main();
     }
 
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
     public function get(int $fracid=0): array
     {
         $a = array();
@@ -60,7 +65,7 @@ class aktensys
 
     public function set($name, $date, $access, $creator, $gb, $tel, $straftat, $vernehmung, $aufklarung, $urteil): int
     {
-        $id = $this->main->generateAktenID($access === 1);
+        $id = $this->main->generateAktenID((int)$access === 1);
         $data = array();
         $data["date"] = $date;
         $data["creator"] = $creator;
@@ -77,7 +82,7 @@ class aktensys
         return $id;
     }
 
-    public function update(string $name, string $date, string $creator, string $gb, string $tel, string $straftat, string $vernehmung, string $aufklarung, string $urteil): bool
+    public function update($name, $date, $creator, $gb, $tel, $straftat, $vernehmung, $aufklarung, $urteil): bool
     {
         if($this->id===0){
             return false;
@@ -98,10 +103,10 @@ class aktensys
         return false;
     }
 
-    public function updaterelese(int $fracid):bool{
+    public function updaterelese($fracid):bool{
         if($this->id===0){
             return false;
         }
-        return $this->main->getSQL()->query("UPDATE `akten` SET `Freigabe`='$fracid' WHERE `ID`='$fracid'");
+        return $this->main->getSQL()->query("UPDATE `akten` SET `Freigabe`='$fracid' WHERE `ID`='$this->id'");
     }
 }

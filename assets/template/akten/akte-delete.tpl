@@ -49,20 +49,4 @@
 </div>
 
 </body>
-<script type="text/javascript">
-    $(".num").counterUp({delay:10,time:1000});
-    function pwandern()
-    {
-        var breite=screen.availWidth;
-        var hoehe=screen.availHeight;
-        var positionX=((screen.availWidth / 2) - breite / 2);
-        var positionY=((screen.availHeight / 2) - hoehe / 2);
-        var url='teammangagment/pwandern.php';
-        pop=window.open('','PW ändern','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,fullscreen=0,width='+breite+',height='+hoehe+',top=10000,left=10000');
-        pop.blur();
-        pop.resizeTo(breite,hoehe);
-        pop.moveTo(positionX,positionY);
-        pop.location=url;
-    }
-</script>
 </html>

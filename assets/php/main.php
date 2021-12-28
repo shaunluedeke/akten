@@ -1,5 +1,4 @@
 <?php
-
 class main
 {
     public function __construct()
@@ -9,8 +8,11 @@ class main
     public function init(): bool
     {
         $mysql = $this->getSQL();
-        return $mysql->query("CREATE TABLE IF NOT EXISTS `login` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `Username` VARCHAR(255) NOT NULL , `PW` TEXT NOT NULL , `Rang` INT(1) NOT NULL , `Access` INT(1) NOT NULL , PRIMARY KEY (`ID`)) ENGINE = InnoDB;") &&
-            $mysql->query("CREATE TABLE IF NOT EXISTS `akten` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `Name` TEXT NOT NULL , `Data` TEXT NOT NULL , `Access` INT(1) NOT NULL , `Freigabe` INT(1) NOT NULL DEFAULT '0' ,PRIMARY KEY (`ID`)) ENGINE = InnoDB;");
+        return  $mysql->query("CREATE TABLE IF NOT EXISTS `login` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `Username` VARCHAR(255) NOT NULL , `PW` TEXT NOT NULL , `Rang` INT(1) NOT NULL , `Access` INT(1) NOT NULL , PRIMARY KEY (`ID`)) ENGINE = InnoDB;") &&
+                $mysql->query("CREATE TABLE IF NOT EXISTS `akten` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `Name` TEXT NOT NULL , `Data` TEXT NOT NULL , `Access` INT(1) NOT NULL , `Freigabe` INT(1) NOT NULL DEFAULT '0' ,PRIMARY KEY (`ID`)) ENGINE = InnoDB;") &&
+                $mysql->query("CREATE TABLE IF NOT EXISTS `personregister` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `Name` VARCHAR(200) NOT NULL , `Birthday` VARCHAR(200) NOT NULL , `Data` TEXT NOT NULL , `IsAlive` BOOLEAN NOT NULL DEFAULT '1', `Wanted` BOOLEAN NOT NULL DEFAULT '0', PRIMARY KEY (`ID`)) ENGINE = InnoDB;") &&
+                $mysql->query("CREATE TABLE IF NOT EXISTS `geldkatalog` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `Paragraf` VARCHAR(200) NOT NULL , `Name` VARCHAR(200) NOT NULL , `Geld` VARCHAR(200) NOT NULL , `Access` INT NOT NULL , PRIMARY KEY (`ID`)) ENGINE = InnoDB;")&&
+                $mysql->query("CREATE TABLE IF NOT EXISTS `apiaccess` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `IP` VARCHAR(200) NOT NULL , `Rang` INT(1) NOT NULL , `Token` VARCHAR(200) NOT NULL, `Blocked` BOOLEAN NOT NULL DEFAULT FALSE , PRIMARY KEY (`ID`)) ENGINE = InnoDB;");
     }
 
     public function login(string $username, string $password, bool $remember): bool

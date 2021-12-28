@@ -8,6 +8,7 @@ if (!isset($_SESSION)) {
 require_once(__DIR__ . "/assets/lib/template/template.php");
 require(__DIR__ . "/assets/php/aktensys.php");
 require_once(__DIR__ . "/assets/php/main.php");
+require (__DIR__ . "/assets/php/bußgeld.php");
 $main = new main();
 $mysql = $main->getSQL();
 $template = new template();
@@ -41,15 +42,15 @@ if ((int)$loginstatus === 1) {
                 $fraction = match ($value['access']) {
                     0 => "Verwaltung",
                     1 => "LSPD",
-                    2 => "LSMD",
+                    2 => "LSMC",
                     default => "Keine Fraction",
                 };
                 $akten_loop = array();
                 $akten_loop["id"] = $value['id'];
-                $akten_loop["name"] = $value['name'];
+                $akten_loop["name"] = $main->sonderzeichenhinzufügen($value['name']);
                 $akten_loop["date"] = $value["data"]['date'];
                 $akten_loop["frac"] = $fraction;
-                $akten_loop["creator"] = $value["data"]['creator'];
+                $akten_loop["creator"] = $main->sonderzeichenhinzufügen($value["data"]['creator']);
                 $template->assign("akten_loop", $akten_loop);
             }
             $template->assign("hasakten", count($result) > 0);
@@ -72,7 +73,7 @@ if ((int)$loginstatus === 1) {
             $isset = count($row) > 0;
             if ($isset) {
                 $template->assign("id", $row["id"]);
-                $template->assign("name", $row["name"]);
+                $template->assign("name", $main->sonderzeichenhinzufügen($row["name"]));
                 $template->assign("date", $row["data"]["date"]);
                 $template->assign("gb", $row["data"]["gb"]);
                 $template->assign("tel", $row["data"]["tel"]);
@@ -90,7 +91,6 @@ if ((int)$loginstatus === 1) {
             }
             $template->assign("rang", $_SESSION['rang'] > 0);
             $template->parse("akten/akte.tpl");
-            $template->parse("sidebar.tpl");
             break;
         }
 
@@ -149,8 +149,7 @@ if ((int)$loginstatus === 1) {
                     $main->sonderzeichenentfernen($_SESSION['name']), $main->sonderzeichenentfernen($_POST['gb']), $main->sonderzeichenentfernen($_POST["tel"]),
                     $main->sonderzeichenentfernen($_POST["straftat"]), $main->sonderzeichenentfernen($_POST["vernehmung"]),
                     $main->sonderzeichenentfernen($_POST["aufklaerung"]), $main->sonderzeichenentfernen($_POST["urteil"]));
-                $akten->updaterelese($_POST["release"]);
-                header("location: index.php?site=akte&id=$id");
+                if($akten->updaterelese($_POST["release"])){ echo('<script>alert("Die Akte wurde erfolgreich bearbeitet!"); window.location="index.php?site=akte&id='.$id.'";</script>');}
             } else {
                 $akte = new aktensys($id);
                 $row = $akte->get();
@@ -197,7 +196,7 @@ if ((int)$loginstatus === 1) {
                 $user_loop["fraction"] = match ($accresold) {
                     "0" => "Verwaltung",
                     "1" => "LSPD",
-                    "2" => "LSMD",
+                    "2" => "LSMC",
                     default => "Keine Fraction",
                 };
                 $user_loop["rang"] = $Rangresold === "1" ? "Leitung" : "Normal";
@@ -296,6 +295,77 @@ if ((int)$loginstatus === 1) {
 
         #endregion
 
+        #region bußgeld
+        //bußgeld system
+
+        case "fine":{
+            $fine = new bußgeld((int)$_SESSION["access"]);
+            $getfine = $fine->get();
+            foreach ($getfine as $key => $value) {
+                $fraction = match ($value['access']) {
+                    0 => "Verwaltung",
+                    1 => "LSPD",
+                    2 => "LSMC",
+                    default => "Keine Fraction",
+                };
+                $fine_loop = array();
+                $fine_loop["para"] = $main->sonderzeichenhinzufügen($value["paragraf"]);
+                $fine_loop["name"] = $main->sonderzeichenhinzufügen($value["name"]);
+                $fine_loop["fine"] = $main->sonderzeichenhinzufügen($value['geld']);
+                $fine_loop["frac"] = $fraction;
+                $fine_loop["leader1"] = (int)$_SESSION["rang"] === 1 ? '<td><a class="btn btn-primary" href="index.php?site=fine-edit&id='.$value['id'].'">Ändern</a></td>' : "";
+                $template->assign("fine_loop", $fine_loop);
+            }
+            $template->assign("leader", (int)$_SESSION["rang"] === 1);
+            $template->assign("leader2", (int)$_SESSION["rang"] === 1);
+            $template->assign("leader3", (int)$_SESSION["rang"] === 1);
+            $template->assign("hasfine", count($getfine) > 0);
+            $template->parse("bußgeld/fine.tpl");
+            break;
+        }
+
+        case "fine-add":{
+            if ((int)$_SESSION["rang"] !== 1) {
+                header("Location: index.php");
+            }
+            if (isset($_POST["createfine"])) {
+                (int)$access = $_POST["frac"] ?? (int)$_SESSION["access"];
+                $fine = new bußgeld((int)$access);
+                $fine->add($_POST["paragraf"], $_POST["name"], $_POST["geld"]);
+                echo('<script>alert("Der Bußgeld wurde hinzugefügt!"); window.location="index.php?site=fine";</script>');
+            }
+            $template->assign("verwaltung", (int)$_SESSION["access"] === 0);
+            $template->parse("bußgeld/fine-add.tpl");
+            break;
+        }
+
+        case "fine-edit":{
+            $id = $_POST["id"]?? $_GET["id"] ?? 0;
+            if ((int)$_SESSION["rang"] !== 1 || $id === 0) {
+                header("Location: index.php");
+            }
+            if (isset($_POST["editfine"])) {
+                $fine = new bußgeld(0,(int)$id);
+                $access = (int)$_SESSION["access"]===0 ? (int)$fine->get()["access"] : (int)$_SESSION["access"];
+                $fine->set_access($access);
+                $fine->edit($_POST["paragraf"], $_POST["name"], $_POST["geld"]);
+                echo('<script>alert("Der Bußgeld wurde bearbeitet!"); window.location="index.php?site=fine";</script>');
+            }
+            $fine = new bußgeld(0,(int)$id);
+            $getfine = $fine->get();
+            if(count($getfine) === 0){
+                echo('<script>alert("Das Bußgeld wurde nicht gefunden!"); window.location="index.php?site=fine";</script>');
+            }
+            $template->assign("id", $id);
+            $template->assign("paragraf", $main->sonderzeichenhinzufügen($getfine["paragraf"]));
+            $template->assign("name", $main->sonderzeichenhinzufügen($getfine["name"]));
+            $template->assign("geld", $main->sonderzeichenhinzufügen($getfine["geld"]));
+            $template->parse("bußgeld/fine-edit.tpl");
+            break;
+        }
+
+        #endregion bußgeld
+
         case "pw-edit":
         {
             if (isset($_POST["pwedit"])) {
@@ -328,7 +398,7 @@ if ((int)$loginstatus === 1) {
             $rang = $_SESSION['rang'] ?? 0;
             $template->assign("teamsite", $rang > 0);
             $template->assign("aktenansehbar", $akten !== 0);
-            $template->assign("pd", (int)$_SESSION["access"] !== 1);
+            $template->assign("pd", (int)$_SESSION["access"] !== 2);
             $template->assign("allakten", $akten);
             $template->parse("login.tpl");
             break;

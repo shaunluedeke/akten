@@ -69,7 +69,7 @@
             <h3><b>Wurde von</b> {creator} <b>erstellt</b></h3>
             {endif pd}
             {if not pd}
-            <h2>MD Akte</h2><br>
+            <h2>MC Akte</h2><br>
             <table class="table table-responsive-lg table-bordered table-dark">
                 <tbody>
                 <tr>

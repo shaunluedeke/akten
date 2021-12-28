@@ -12,18 +12,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.js"></script>
     <script>
-        function openSlideMenu(){
+        function openSlideMenu() {
             document.getElementById('menu').style.width = '250px';
             document.getElementById('content').style.marginLeft = '250px';
         }
-        function closeSlideMenu(){
+
+        function closeSlideMenu() {
             document.getElementById('menu').style.width = '0';
             document.getElementById('content').style.marginLeft = '0';
         }
     </script>
 </head>
 <body>
-<script type="text/javascript" color="200, 0, 0" opacity="1.6" zindex="-2" count="150" src="http://www.cssscript.com/demo/interactive-particle-nest-system-with-javascript-and-canvas-canvas-nest-js/canvas-nest.js"></script><canvas id="c_n2" width="725" height="913" style="position: fixed; top: 0px; left: 0px; z-index: -2; opacity: 0.7;"></canvas>
+<script type="text/javascript" color="200, 0, 0" opacity="1.6" zindex="-2" count="150"
+        src="http://www.cssscript.com/demo/interactive-particle-nest-system-with-javascript-and-canvas-canvas-nest-js/canvas-nest.js"></script>
+<canvas id="c_n2" width="725" height="913"
+        style="position: fixed; top: 0px; left: 0px; z-index: -2; opacity: 0.7;"></canvas>
 <div id="content">
 
     <span class="slide">
@@ -37,6 +41,7 @@
             <i class="fas fa-times"></i>
         </a>
         <a href="#">Home</a>
+        <a href="index.php?site=fine">Bußgelder</a>
         <a href="index.php?site=pw-edit">Password Ändern</a>
         {if teamsite}
         <a href="index.php?site=team">Team</a>
@@ -51,75 +56,121 @@
             <br><br>
             <br>
             {if not pd}
-                <div class="hover-table-layout" style="width: 90%;position: absolute;top: 30%;left: 60%;transform: translate(-50%, 0%);">
-                        <div class="listing-item">
-                            <figure class="image">
-                                <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px" />
-                                <figcaption>
-                                    <div class="caption">
-                                        <h1>Akten ansehen</h1>
-                                    </div>
-                                </figcaption>
-                            </figure>
-                            <div class="listing">
-                                <h3>Soviele wurden schon erstellt!</h3>
-                                <h3 class="num">{allakten}</h3>
-                                <a href="index.php?site=akten-all" class="logbtn">Alle ansehen</a>
+            <div class="hover-table-layout"
+                 style="width: 90%;position: absolute;top: 30%;left: 60%;transform: translate(-50%, 0%);">
+                <div class="listing-item">
+                    <figure class="image">
+                        <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px"/>
+                        <figcaption>
+                            <div class="caption">
+                                <h1>Akten ansehen</h1>
                             </div>
-                        </div>
-                        <br>
-                        <div class="listing-item">
-                            <figure class="image">
-                                <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px" />
-                                <figcaption>
-                                    <div class="caption">
-                                        <h1>Akten erstellen</h1>
-                                    </div>
-                                </figcaption>
-                            </figure>
-                            <div class="listing">
-                                <h3>Erstelle eine Neue Akte!</h3>
-                                <h3>Was hat der Type gemacht</h3>
-                                <a href="index.php?site=akten-create" class="logbtn">Akte Erstellen</a>
-                            </div>
-                        </div>
-                    <br>
-                    </div>
-            {endif not pd}
-            {if pd}
-                <div class="hover-table-layout" style="width: 100%;position: absolute;top: 30%;left: 60%;transform: translate(-50%, 0%);">
-                    <div class="listing-item">
-                        <figure class="image">
-                            <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px" />
-                            <figcaption>
-                                <div class="caption">
-                                    <h1>Akten ansehen</h1>
-                                </div>
-                            </figcaption>
-                        </figure>
-                        <div class="listing">
-                            <h3>Soviele wurden schon erstellt!</h3>
-                            <h3 class="num">{allakten}</h3>
-                            <a href="index.php?site=akten-all" class="logbtn">Alle ansehen</a>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="listing-item">
-                        <figure class="image">
-                            <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px" />
-                            <figcaption>
-                                <div class="caption">
-                                    <h1>Akten erstellen</h1>
-                                </div>
-                            </figcaption>
-                        </figure>
-                        <div class="listing">
-                            <h3>Erstelle eine Neue Akte!</h3>
-                            <h3>Was hat der schuft gemacht</h3>
-                            <a href="index.php?site=akten-create" class="logbtn">Akte Erstellen</a>
-                        </div>
+                        </figcaption>
+                    </figure>
+                    <div class="listing">
+                        <h3>Soviele wurden schon erstellt!</h3>
+                        <h3 class="num">{allakten}</h3>
+                        <a href="index.php?site=akten-all" class="logbtn">Alle ansehen</a>
                     </div>
                 </div>
+                <br>
+                <div class="listing-item">
+                    <figure class="image">
+                        <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px"/>
+                        <figcaption>
+                            <div class="caption">
+                                <h1>Akten erstellen</h1>
+                            </div>
+                        </figcaption>
+                    </figure>
+                    <div class="listing">
+                        <h3>Erstelle eine Neue Akte!</h3>
+                        <h3>Was hat der Type gemacht</h3>
+                        <a href="index.php?site=akten-create" class="logbtn">Akte Erstellen</a>
+                    </div>
+                </div>
+                <br>
+                <div class="listing-item">
+                    <figure class="image">
+                        <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px"/>
+                        <figcaption>
+                            <div class="caption">
+                                <h1>Preis Liste</h1>
+                            </div>
+                        </figcaption>
+                    </figure>
+                    <div class="listing">
+                        <h3>Sehe alle Aktuellen Preise</h3>
+                        <a href="index.php?site=fine" class="logbtn">Alle ansehen</a>
+                    </div>
+                </div>
+                <br>
+            </div>
+            {endif not pd}
+            {if pd}
+            <div class="hover-table-layout"
+                 style="width: 100%;position: absolute;top: 30%;left: 60%;transform: translate(-50%, 0%);">
+                <div class="listing-item">
+                    <figure class="image">
+                        <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px"/>
+                        <figcaption>
+                            <div class="caption">
+                                <h1>Akten ansehen</h1>
+                            </div>
+                        </figcaption>
+                    </figure>
+                    <div class="listing">
+                        <h3>Soviele wurden schon erstellt!</h3>
+                        <h3 class="num">{allakten}</h3>
+                        <a href="index.php?site=akten-all" class="logbtn">Alle ansehen</a>
+                    </div>
+                </div>
+                <br>
+                <div class="listing-item">
+                    <figure class="image">
+                        <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px"/>
+                        <figcaption>
+                            <div class="caption">
+                                <h1>Akten erstellen</h1>
+                            </div>
+                        </figcaption>
+                    </figure>
+                    <div class="listing">
+                        <h3>Erstelle eine Neue Akte!</h3>
+                        <h3>Was hat der schuft gemacht</h3>
+                        <a href="index.php?site=akten-create" class="logbtn">Akte Erstellen</a>
+                    </div>
+                </div>
+                <br>
+                <div class="listing-item">
+                    <figure class="image">
+                        <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px"/>
+                        <figcaption>
+                            <div class="caption">
+                                <h1>Person ankucken</h1>
+                            </div>
+                        </figcaption>
+                    </figure>
+                    <div class="listing">
+                        <h3>Sehe alle Leute an</h3>
+                        <a href="index.php?site=akten-create" class="logbtn">Alle ansehen</a>
+                    </div>
+                </div>
+                <div class="listing-item">
+                    <figure class="image">
+                        <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px"/>
+                        <figcaption>
+                            <div class="caption">
+                                <h1>Bußgelder ankucken</h1>
+                            </div>
+                        </figcaption>
+                    </figure>
+                    <div class="listing">
+                        <h3>Sehe alle aktuellen Preise</h3>
+                        <a href="index.php?site=fine" class="logbtn">Alle ansehen</a>
+                    </div>
+                </div>
+            </div>
             {endif pd}
         </center>
     </div>

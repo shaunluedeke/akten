@@ -143,7 +143,7 @@
                 <select class="form-select" name="release">
                     <option style="color: black;" {releaseselect0} value="0">Keinen</option>
                     <option style="color: black;" {releaseselect1} value="1">LSPD</option>
-                    <option style="color: black;" {releaseselect2} value="2">LSMD</option>
+                    <option style="color: black;" {releaseselect2} value="2">LSMC</option>
                 </select>
             </div>
             <br>
