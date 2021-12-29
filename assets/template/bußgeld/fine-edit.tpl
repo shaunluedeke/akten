@@ -45,7 +45,7 @@
 
   </div>
   <div class="form">
-    <h1>Neue Bußgeld erstellen</h1>
+    <h1>{title}</h1>
     <form action="index.php?site=fine-edit" method="POST">
       <div class="form-group">
         <label for="exampleInputEmail1">ID</label>
@@ -63,7 +63,7 @@
       </div>
       <br>
       <div class="form-group">
-        <label for="exampleInputEmail1">Strafe</label>
+        <label for="exampleInputEmail1">{money}</label>
         <input type="text" class="form-control" name="geld" value="{geld}" placeholder="Strafe" required>
       </div>
       <br>

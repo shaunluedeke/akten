@@ -45,7 +45,7 @@
 
     </div>
     <div class="form">
-        <h1>Neue Bußgeld erstellen</h1>
+        <h1>{title}</h1>
         <form action="index.php?site=fine-add" method="POST">
             <div class="form-group">
                 <label for="exampleInputEmail1">Paragraf</label>
@@ -53,7 +53,7 @@
             </div>
             <br>
             <div class="form-group">
-                <label for="exampleInputEmail1">Name</label>
+                <label for="exampleInputEmail1">{money}</label>
                 <input type="text" class="form-control" name="name" placeholder="Name" required>
             </div>
             <br>

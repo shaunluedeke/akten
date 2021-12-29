@@ -63,18 +63,9 @@ class aktensys
         return false;
     }
 
-    public function set($name, $date, $access, $creator, $gb, $tel, $straftat, $vernehmung, $aufklarung, $urteil): int
+    public function set($name, $access,array $data): int
     {
-        $id = $this->main->generateAktenID((int)$access === 1);
-        $data = array();
-        $data["date"] = $date;
-        $data["creator"] = $creator;
-        $data["gb"] = $gb;
-        $data["tel"] = $tel;
-        $data["straftat"] = $straftat;
-        $data["vernehmung"] = $vernehmung;
-        $data["aufklarung"] = $aufklarung;
-        $data["urteil"] = $urteil;
+        $id = $this->main->generateAktenID((int)$access);
         try {
             $this->main->getSQL()->query("INSERT INTO `akten`(`ID`, `Name`, `Data`, `Access`) VALUES ('$id','$name','" . json_encode($data, JSON_THROW_ON_ERROR) . "','$access')");
         } catch (JsonException $e) {
@@ -82,20 +73,11 @@ class aktensys
         return $id;
     }
 
-    public function update($name, $date, $creator, $gb, $tel, $straftat, $vernehmung, $aufklarung, $urteil): bool
+    public function update($name,array $data): bool
     {
         if($this->id===0){
             return false;
         }
-        $data = array();
-        $data["date"] = $date;
-        $data["creator"] = $creator;
-        $data["gb"] = $gb;
-        $data["tel"] = $tel;
-        $data["straftat"] = $straftat;
-        $data["vernehmung"] = $vernehmung;
-        $data["aufklarung"] = $aufklarung;
-        $data["urteil"] = $urteil;
         try {
             return $this->main->getSQL()->query("UPDATE `akten` SET `Name`='$name',`Data`='" . json_encode($data, JSON_THROW_ON_ERROR) . "' WHERE `ID`='$this->id'");
         } catch (JsonException $e) {

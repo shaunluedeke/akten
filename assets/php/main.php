@@ -12,10 +12,11 @@ class main
                 $mysql->query("CREATE TABLE IF NOT EXISTS `akten` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `Name` TEXT NOT NULL , `Data` TEXT NOT NULL , `Access` INT(1) NOT NULL , `Freigabe` INT(1) NOT NULL DEFAULT '0' ,PRIMARY KEY (`ID`)) ENGINE = InnoDB;") &&
                 $mysql->query("CREATE TABLE IF NOT EXISTS `personregister` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `Name` VARCHAR(200) NOT NULL , `Birthday` VARCHAR(200) NOT NULL , `Data` TEXT NOT NULL , `IsAlive` BOOLEAN NOT NULL DEFAULT '1', `Wanted` BOOLEAN NOT NULL DEFAULT '0', PRIMARY KEY (`ID`)) ENGINE = InnoDB;") &&
                 $mysql->query("CREATE TABLE IF NOT EXISTS `geldkatalog` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `Paragraf` VARCHAR(200) NOT NULL , `Name` VARCHAR(200) NOT NULL , `Geld` VARCHAR(200) NOT NULL , `Access` INT NOT NULL , PRIMARY KEY (`ID`)) ENGINE = InnoDB;")&&
-                $mysql->query("CREATE TABLE IF NOT EXISTS `apiaccess` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `IP` VARCHAR(200) NOT NULL , `Rang` INT(1) NOT NULL , `Token` VARCHAR(200) NOT NULL, `Blocked` BOOLEAN NOT NULL DEFAULT FALSE , PRIMARY KEY (`ID`)) ENGINE = InnoDB;");
+                $mysql->query("CREATE TABLE IF NOT EXISTS `apiaccess` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `IP` VARCHAR(200) NOT NULL , `Rang` INT(1) NOT NULL , `Token` VARCHAR(200) NOT NULL, `Blocked` BOOLEAN NOT NULL DEFAULT FALSE , PRIMARY KEY (`ID`)) ENGINE = InnoDB;")&&
+                $mysql->query("CREATE TABLE IF NOT EXISTS `frac` ( `Access` INT(16) NOT NULL AUTO_INCREMENT , `Name` VARCHAR(200) NOT NULL , `Textfile` VARCHAR(200) NOT NULL, `AktenID` INT(16) NOT NULL, PRIMARY KEY (`Access`)) ENGINE = InnoDB;");
     }
 
-    public function login(string $username, string $password, bool $remember): bool
+    public function login(string $username, string $password): bool
     {
         $mysql = $this->getSQL();
         $usercrypt = base64_encode($username);
@@ -62,12 +63,14 @@ class main
         return $random;
     }
 
-    public function generateAktenID(bool $pd =true):int{
-        require(__DIR__ . "/../lib/random/random.php");
+    public function generateAktenID(int $access):int{
+        require_once(__DIR__ . "/../lib/random/random.php");
+        require_once(__DIR__ ."/fracsys.php");
+        $fracsys = new fracsys($access);
         $mysql = $this->getSQL();
-        $random = ($pd ? 911 : 912).random::getInt(5,false);
+        $random = $fracsys->aktenid().random::getInt(5,false);
         while ($mysql->count("SELECT `ID` FROM `akten` WHERE `ID`='$random'") > 0) {
-            $random = ($pd ? 911 : 912).random::getInt(5,false);
+            $random = $fracsys->aktenid().random::getInt(5,false);
         }
         return $random;
     }

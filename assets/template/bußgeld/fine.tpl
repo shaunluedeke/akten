@@ -44,7 +44,7 @@
   </div>
   {if hasfine}
   <center>
-    <h1>Webinterface von Bußgeld System</h1>
+    <h1>{title}</h1>
     <br><br><br><br><br>
     <div class="inter" style="width: 80%;position: absolute;top: 100px;left: 50%;transform: translate(-50%, 0%);">
       <table id="Table" class="table table-striped table-dark" style="width: 100%;" data-toggle="table" data-pagination="true"
@@ -53,7 +53,7 @@
         <tr>
           <th scope="col" data-sortable="true" data-field="Akte">Paragraf</th>
           <th scope="col" data-sortable="true" data-field="name">Name</th>
-          <th scope="col" data-sortable="true" data-field="date">Strafe</th>
+          <th scope="col" data-sortable="true" data-field="date">{money}</th>
           <th scope="col" data-sortable="true" data-field="frac">Fraction</th>
           {if leader}
           <th scope="col" data-sortable="false" data-field="creater">Ändern</th>

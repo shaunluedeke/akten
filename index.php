@@ -18,7 +18,7 @@ $loginstatus = $_SESSION['login'] ?? 0;
 
 if ((int)$loginstatus === 0) {
     if (isset($_POST["logi"])) {
-        if ($main->login($_POST["usernam"], $_POST["Passord"], ($_POST["remember"] ?? "") === "true")) {
+        if ($main->login($_POST["usernam"], $_POST["Passord"])) {
             echo('<script>alert("Du bist Jetzt eingelogt!"); window.location="index.php";</script>');
         } else {
             echo('<script>alert("Du hast das falsche Passwort eingegeben!"); </script>');
@@ -30,6 +30,8 @@ if ((int)$loginstatus === 0) {
 
 if ((int)$loginstatus === 1) {
     $site = $_GET['site'] ?? "";
+    require_once(__DIR__ . "/assets/php/fracsys.php");
+    $fracsys = new fracsys((int)$_SESSION['access']);
     switch ($site) {
 
         #region akten
@@ -39,12 +41,7 @@ if ((int)$loginstatus === 1) {
             $aktensys = new aktensys(0);
             $result = $aktensys->get((int)$_SESSION['access']);
             foreach ($result as $key => $value) {
-                $fraction = match ($value['access']) {
-                    0 => "Verwaltung",
-                    1 => "LSPD",
-                    2 => "LSMC",
-                    default => "Keine Fraction",
-                };
+                $fraction = $fracsys->name($value['access']);
                 $akten_loop = array();
                 $akten_loop["id"] = $value['id'];
                 $akten_loop["name"] = $main->sonderzeichenhinzufügen($value['name']);
@@ -70,24 +67,24 @@ if ((int)$loginstatus === 1) {
             }
             $akten = new aktensys($id);
             $row = $akten->get();
-            $isset = count($row) > 0;
-            if ($isset) {
+            if (count($row) > 0) {
+                $txt = $fracsys->text("akte",(int)$row['access']);
+                $template->assign("aktenname", $txt["title"] ?? "Kein Titel");
                 $template->assign("id", $row["id"]);
                 $template->assign("name", $main->sonderzeichenhinzufügen($row["name"]));
-                $template->assign("date", $row["data"]["date"]);
-                $template->assign("gb", $row["data"]["gb"]);
-                $template->assign("tel", $row["data"]["tel"]);
-                $template->assign("straftat", $main->sonderzeichenhinzufügen($row["data"]["straftat"]));
-                $template->assign("vernehmung", $main->sonderzeichenhinzufügen($row["data"]["vernehmung"]));
-                $template->assign("aufklarung", $main->sonderzeichenhinzufügen($row["data"]["aufklarung"]));
-                $template->assign("urteil", $main->sonderzeichenhinzufügen($row["data"]["urteil"]));
+                foreach ($row["data"] as $key => $value) {
+                    if($key !== "creator") {
+                        $akten_loop = [];
+                        $akten_loop["key"] = $main->sonderzeichenhinzufügen($txt[$key]??"");
+                        $akten_loop["value"] = $main->sonderzeichenhinzufügen($value);
+                        $template->assign("akten_loop", $akten_loop);
+                    }
+                }
                 $template->assign("creator", $row["data"]["creator"]);
-                $template->assign("pd", (int)$row["access"] === 1);
                 $template->assign("released",(int)$_SESSION["access"]===(int)$row["access"] || (int)$_SESSION["access"]===0);
-                $template->assign("release", match ($row["release"]) {1 => "Freigegeben für das LSPD",2 => "Freigegeben für das LSMC",default => "",});
+                $template->assign("release",((int)$row['release']===0?"":"Freigegeben für das ".$fracsys->name($row['release'])));
             } else {
-                echo('<script>alert("Die Akte konnte nicht gefunden werden!"); </script>');
-                header("Location: index.php?site=akten-all");
+                echo('<script>alert("Die Akte konnte nicht gefunden werden!"); window.location="index.php?site=akten-all";</script>');
             }
             $template->assign("rang", $_SESSION['rang'] > 0);
             $template->parse("akten/akte.tpl");
@@ -100,14 +97,21 @@ if ((int)$loginstatus === 1) {
                 $access = $_GET['frac'] === "pd" ? "1" : "2";
                 $date = date("d.m.Y", strtotime($_POST["date"]));
                 $akten = new aktensys();
-                $id = $akten->set($main->sonderzeichenentfernen($_POST["name"]), $date, $access,
-                    $main->sonderzeichenentfernen($_SESSION['name']), $main->sonderzeichenentfernen($_POST['gb']), $main->sonderzeichenentfernen($_POST["tel"]),
-                    $main->sonderzeichenentfernen($_POST["straftat"]), $main->sonderzeichenentfernen($_POST["vernehmung"]),
-                    $main->sonderzeichenentfernen($_POST["aufklaerung"]), $main->sonderzeichenentfernen($_POST["urteil"]));
+                $dataarray = [];
+                foreach($_POST as $key=>$value)
+                {
+                    if($key !== "createakte" && $key !== "name")
+                    {
+                        $dataarray[$key] = $value;
+                    }
+                }
+                $dataarray["creator"] = $_SESSION["name"];
+                $id = $akten->set($main->sonderzeichenentfernen($_POST["name"]), $access, $dataarray);
                 header("location: index.php?site=akte&id=$id");
             } else {
-                $template->assign("pd", $_SESSION['access'] === 1);
-                $template->assign("verwaltung", $_SESSION['access'] === 0);
+                $txt = $fracsys->text("akte-create",(int)$_SESSION['access']);
+                $template->assign("title", $txt["title"]);
+                $template->assign("text", $txt["text"]);
                 $template->assign("date", date("Y-m-d"));
                 $template->parse("akten/akten-create.tpl");
             }
@@ -145,10 +149,15 @@ if ((int)$loginstatus === 1) {
             if (isset($_POST["editakte"])) {
                 $date = date("d.m.Y", strtotime($_POST["date"]));
                 $akten = new aktensys($id);
-                $akten->update($main->sonderzeichenentfernen($_POST["name"]), $date,
-                    $main->sonderzeichenentfernen($_SESSION['name']), $main->sonderzeichenentfernen($_POST['gb']), $main->sonderzeichenentfernen($_POST["tel"]),
-                    $main->sonderzeichenentfernen($_POST["straftat"]), $main->sonderzeichenentfernen($_POST["vernehmung"]),
-                    $main->sonderzeichenentfernen($_POST["aufklaerung"]), $main->sonderzeichenentfernen($_POST["urteil"]));
+                $dataarray = array();
+                foreach($_POST as $key=>$value)
+                {
+                    if($key !=="release" && $key !== "name" && $key !== "editakte"){
+                        $dataarray[$key] = $main->sonderzeichenentfernen($value);
+                    }
+                }
+                $dataarray["creator"] = $_SESSION["name"];
+                $akten->update($main->sonderzeichenentfernen($_POST["name"]), $dataarray);
                 if($akten->updaterelese($_POST["release"])){ echo('<script>alert("Die Akte wurde erfolgreich bearbeitet!"); window.location="index.php?site=akte&id='.$id.'";</script>');}
             } else {
                 $akte = new aktensys($id);
@@ -156,16 +165,18 @@ if ((int)$loginstatus === 1) {
                 $isset = count($row) > 0;
                 if ($isset) {
                     $template->assign("id", $row["id"]);
-                    $template->assign("name", $row["name"]);
-                    $template->assign("date", date("Y-m-d", strtotime($row["data"]["date"])));
-                    $template->assign("gb", $row["data"]["gb"]);
-                    $template->assign("tel", $row["data"]["tel"]);
-                    $template->assign("straftat", $main->sonderzeichenhinzufügen($row["data"]["straftat"]));
-                    $template->assign("vernehmung", $main->sonderzeichenhinzufügen($row["data"]["vernehmung"]));
-                    $template->assign("aufklarung", $main->sonderzeichenhinzufügen($row["data"]["aufklarung"]));
-                    $template->assign("urteil", $main->sonderzeichenhinzufügen($row["data"]["urteil"]));
-                    $template->assign("creator", $row["data"]["creator"]);
-                    $template->assign("pd", (int)$row["access"] === 1);
+                    $template->assign("name", $main->sonderzeichenhinzufügen($row["name"]));
+                    $txt = $fracsys->text("akte",(int)$row['access']);
+                    foreach ($row["data"] as $key => $value) {
+                        if($key !== "creator" && $key !== "name") {
+                            $akten_loop = [];
+                            $akten_loop["name"] = $main->sonderzeichenhinzufügen($txt[$key]??"");
+                            $akten_loop["name1"] = $main->sonderzeichenhinzufügen($txt[$key]??"");
+                            $akten_loop["key"] = ($key??"");
+                            $akten_loop["value"] = $main->sonderzeichenhinzufügen($value);
+                            $template->assign("akten_loop", $akten_loop);
+                        }
+                    }
                     $template->assign("releaseselect0",$row["release"]===0?"selected":"");
                     $template->assign("releaseselect1",$row["release"]===1?"selected":"");
                     $template->assign("releaseselect2",$row["release"]===2?"selected":"");
@@ -191,15 +202,8 @@ if ((int)$loginstatus === 1) {
             while ($row = mysqli_fetch_array($result)) {
                 $user_loop = array();
                 $user_loop["name"] = base64_decode($row["Username"]);
-                $Rangresold = $row["Rang"];
-                $accresold = $row["Access"];
-                $user_loop["fraction"] = match ($accresold) {
-                    "0" => "Verwaltung",
-                    "1" => "LSPD",
-                    "2" => "LSMC",
-                    default => "Keine Fraction",
-                };
-                $user_loop["rang"] = $Rangresold === "1" ? "Leitung" : "Normal";
+                $user_loop["fraction"] = $fracsys->name((int)$row["Access"]);
+                $user_loop["rang"] = (int)$row["Rang"] === 1 ? "Leitung" : "Normal";
                 $template->assign("user_loop", $user_loop);
             }
             $template->parse("team/index.tpl");
@@ -301,18 +305,15 @@ if ((int)$loginstatus === 1) {
         case "fine":{
             $fine = new bußgeld((int)$_SESSION["access"]);
             $getfine = $fine->get();
+            $txt = $fracsys->text("fine", $_SESSION["access"]);
+            $template->assign("title", $txt["title"] ?? "Bußgeld");
+            $template->assign("money", $txt["money"] ?? "Strafe");
             foreach ($getfine as $key => $value) {
-                $fraction = match ($value['access']) {
-                    0 => "Verwaltung",
-                    1 => "LSPD",
-                    2 => "LSMC",
-                    default => "Keine Fraction",
-                };
                 $fine_loop = array();
                 $fine_loop["para"] = $main->sonderzeichenhinzufügen($value["paragraf"]);
                 $fine_loop["name"] = $main->sonderzeichenhinzufügen($value["name"]);
                 $fine_loop["fine"] = $main->sonderzeichenhinzufügen($value['geld']);
-                $fine_loop["frac"] = $fraction;
+                $fine_loop["frac"] = $fracsys->name($value['access']);
                 $fine_loop["leader1"] = (int)$_SESSION["rang"] === 1 ? '<td><a class="btn btn-primary" href="index.php?site=fine-edit&id='.$value['id'].'">Ändern</a></td>' : "";
                 $template->assign("fine_loop", $fine_loop);
             }
@@ -334,6 +335,9 @@ if ((int)$loginstatus === 1) {
                 $fine->add($_POST["paragraf"], $_POST["name"], $_POST["geld"]);
                 echo('<script>alert("Der Bußgeld wurde hinzugefügt!"); window.location="index.php?site=fine";</script>');
             }
+            $txt = $fracsys->text("fine-add", $_SESSION["access"]);
+            $template->assign("title", $txt["title"] ?? "Neue Bußgeld erstellen");
+            $template->assign("money", $txt["money"] ?? "Strafe");
             $template->assign("verwaltung", (int)$_SESSION["access"] === 0);
             $template->parse("bußgeld/fine-add.tpl");
             break;
@@ -356,6 +360,9 @@ if ((int)$loginstatus === 1) {
             if(count($getfine) === 0){
                 echo('<script>alert("Das Bußgeld wurde nicht gefunden!"); window.location="index.php?site=fine";</script>');
             }
+            $txt = $fracsys->text("fine-edit", $_SESSION["access"]);
+            $template->assign("title", $txt["title"] ?? "Bußgeld ändern");
+            $template->assign("money", $txt["money"] ?? "Strafe");
             $template->assign("id", $id);
             $template->assign("paragraf", $main->sonderzeichenhinzufügen($getfine["paragraf"]));
             $template->assign("name", $main->sonderzeichenhinzufügen($getfine["name"]));
