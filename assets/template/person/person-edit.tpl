@@ -66,7 +66,7 @@
             </div><br>
             <div class="form-group">
                 <label for="exampleInputEmail1">Geburtsdatum</label>
-                <input type="date" class="form-control" name="gb" placeholder="Geburtsdatum" required value="{gb}">
+                <input type="date" class="form-control" name="gb" placeholder="Geburtsdatum" value="{gb}">
             </div><br>
             <div class="form-group">
                 <label for="exampleInputEmail1">Telefonnummer</label>
@@ -74,7 +74,7 @@
             </div><br>
             <div class="form-group">
                 <label for="exampleInputEmail1">Adresse</label>
-                <input type="text" class="form-control" name="adress" placeholder="Adresse" required value="{adress}">
+                <input type="text" class="form-control" name="adress" placeholder="Adresse" value="{adress}">
             </div><br>
             <div class="form-group">
                 <label for="exampleInputEmail1">Fraction</label>
@@ -100,7 +100,7 @@
                 <input type="text" class="form-control" name="wantedfor" placeholder="Wanted" value="{wantedfor}">
             </div>
             <br>
-            <p><a class="btn btn-danger" href="index.php?site=person&id={id}">Zurück</a>
+            <p><a class="btn btn-danger" href="index.php?site=person">Zurück</a>
                 <button type="submit" name="editperson" class="btn btn-primary">Speichern</button></p>
 
         </form>

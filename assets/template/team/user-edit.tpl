@@ -68,10 +68,10 @@
                 <label for="exampleInputEmail1">Fraction</label>
                 {if verwaltung}
                 <input type="number" class="form-control" name="frac" placeholder="555" value="{access}" min="0" max="2">
-                {endif verwaltung}
+                {/if}
                 {if not verwaltung}
                 <input type="number" class="form-control" name="frac" placeholder="555" value="{access1}" readonly>
-                {endif not verwaltung}
+                {/if not}
             </div>
             <br>
             <button type="submit" name="edit" class="btn btn-primary">Speichern</button>

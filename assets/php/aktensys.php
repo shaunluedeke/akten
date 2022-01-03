@@ -112,4 +112,15 @@ class aktensys
         }
         return $this->main->getSQL()->query("UPDATE `akten` SET `Freigabe`='$fracid' WHERE `ID`='$this->id'");
     }
+
+    public function hasAccess($fracid):bool{
+        if($this->id===0){
+            return false;
+        }
+        if($fracid===0){
+            return true;
+        }
+        $a = $this->get();
+        return ($fracid === $a["access"] || $fracid === $a["release"]);
+    }
 }

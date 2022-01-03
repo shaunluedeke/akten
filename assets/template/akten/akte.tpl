@@ -47,7 +47,7 @@
             <h3>{release}</h3><br>
             {if released}
                 <p><a class="btn btn-success" href="index.php?site=akten-edit&id={id}">Akte ändern</a>  {if rang}<a class="btn btn-warning" href="index.php?site=akten-delete&id={id}">Akte Löschen</a>{/if}</p>
-            {/if}
+
             <a class="btn btn-danger" href="index.php?site=akten-all">Zurück</a>
         </div>
     </div>

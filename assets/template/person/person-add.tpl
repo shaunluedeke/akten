@@ -74,7 +74,7 @@
             </div>
             <div class="form-group">
                 <label for="exampleInputEmail1">Adresse</label>
-                <input type="text" class="form-control" name="adress" placeholder="Adresse" required>
+                <input type="text" class="form-control" name="adress" placeholder="Adresse">
             </div>
             <div class="form-group">
                 <label for="exampleInputEmail1">Fraction</label>
@@ -100,8 +100,8 @@
                 <input type="text" class="form-control" name="wantedfor" placeholder="Wanted">
             </div>
             <br>
-            <p><a class="btn btn-danger" href="index.php?site=person&id={id}">Zurück</a>
-                <button type="submit" name="editperson" class="btn btn-primary">Speichern</button></p>
+            <p><a class="btn btn-danger" href="index.php?site=person">Zurück</a>
+                <button type="submit" name="addperson" class="btn btn-primary">Speichern</button></p>
 
         </form>
     </div>

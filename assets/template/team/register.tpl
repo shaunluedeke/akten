@@ -130,25 +130,12 @@
     <input type="number" name="access" max="2" min="0" required>
     <span data-placeholder="Access"></span>
     </div>
-  {endif access}
+  {/if}
   <input type="submit" class="logbtn" name ="register" value="Hinzufügen">
 
 
 
 </form>
-
-<script type="text/javascript">
-  $(".txtb input").on("focus",function(){
-    $(this).addClass("focus");
-  });
-
-  $(".txtb input").on("blur",function(){
-    if($(this).val() == "")
-      $(this).removeClass("focus");
-  });
-
-</script>
-
 
 </body>
 </html>

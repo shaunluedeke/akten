@@ -11,6 +11,7 @@ require_once(__DIR__ . "/assets/php/main.php");
 require(__DIR__ . "/assets/php/bußgeld.php");
 $main = new main();
 $mysql = $main->getSQL();
+$main->init();
 $template = new template();
 $template->setTempFolder(__DIR__ . "/assets/template/");
 
@@ -426,13 +427,18 @@ if ((int)$loginstatus === 1) {
                 $akte = "";
                 $pd = 0;
                 $mc = 0;
+                require_once(__DIR__ . "/assets/php/aktensys.php");
+                $aktensys = new aktensys();
                 foreach (($getperson["data"]["akte"]) as $key) {
-                    if(str_contains($key,"911")) {
-                        $pd++;
-                        $akte .= '<a class="btn btn-info" href="index.php?site=akte&id=' . $key . '">PD Akte #'.$pd.'</a>     ';
-                    }else{
-                        $mc++;
-                        $akte .= '<a class="btn btn-danger" href="index.php?site=akte&id=' . $key . '">MC Akte #' . $mc . '</a>     ';
+                    $aktensys->setId($key);
+                    if($aktensys->hasAccess((int)$_SESSION["access"])){
+                        if (str_contains($key, "911")) {
+                            $pd++;
+                            $akte .= '<a class="btn btn-info" href="index.php?site=akte&id=' . $key . '">PD Akte #' . $pd . '</a>     ';
+                        } else {
+                            $mc++;
+                            $akte .= '<a class="btn btn-danger" href="index.php?site=akte&id=' . $key . '">MC Akte #' . $mc . '</a>     ';
+                        }
                     }
                 }
                 $template->assign("akte", $akte);
@@ -461,12 +467,12 @@ if ((int)$loginstatus === 1) {
                     }
                 }
                 $data = [
-                    "wantedfor" => $_POST["wantedfor"] ?? "",
-                    "tel" => $_POST["tel"] ?? "",
-                    "adress" => $_POST["adress"] ?? "",
-                    "akten" => $_POST["akten"] ?? "",
-                    "frac" => $_POST["frac"] ?? "",
-                    "files" => $fadd
+                    "wantedfor" => ($_POST["wantedfor"] ?? ""),
+                    "tel" => ($_POST["tel"] ?? ""),
+                    "adress" => ($_POST["adress"] ?? ""),
+                    "akte" => ($_POST["akten"] ?? []),
+                    "frac" => ($_POST["frac"] ?? ""),
+                    "files" => ($fadd)
                 ];
                 $id = $person->add($_POST["name"], date("d.m.Y", strtotime($_POST["gb"] ?? date("Y-m-d"))), $data);
                 $person->setID($id);

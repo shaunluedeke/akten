@@ -63,6 +63,7 @@ class person
             $mysql->query("INSERT INTO `personregister` (`ID`,`Name`, `Birthday`, `Data`, `IsAlive`, `Wanted`) VALUES ('$id','$name', '$birthday', '$json', '1', '0')");
             return $id;
         } catch (JsonException $e) {
+            var_dump($e->getMessage());
         }
         return 0;
     }

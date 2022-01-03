@@ -8,6 +8,7 @@ $page = $page<4?$page:3;
 
 require_once(__DIR__ ."/../assets/php/main.php");
 $main=new main();
+
 if((file_exists("install.lock"))){header("Location: ../index.php");}
 if(isset($_POST)){
     switch($page){
