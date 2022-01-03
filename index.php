@@ -8,7 +8,7 @@ if (!isset($_SESSION)) {
 require_once(__DIR__ . "/assets/lib/template/template.php");
 require(__DIR__ . "/assets/php/aktensys.php");
 require_once(__DIR__ . "/assets/php/main.php");
-require (__DIR__ . "/assets/php/bußgeld.php");
+require(__DIR__ . "/assets/php/bußgeld.php");
 $main = new main();
 $mysql = $main->getSQL();
 $template = new template();
@@ -68,21 +68,21 @@ if ((int)$loginstatus === 1) {
             $akten = new aktensys($id);
             $row = $akten->get();
             if (count($row) > 0) {
-                $txt = $fracsys->text("akte",(int)$row['access']);
+                $txt = $fracsys->text("akte", (int)$row['access']);
                 $template->assign("aktenname", $txt["title"] ?? "Kein Titel");
                 $template->assign("id", $row["id"]);
                 $template->assign("name", $main->sonderzeichenhinzufügen($row["name"]));
                 foreach ($row["data"] as $key => $value) {
-                    if($key !== "creator") {
+                    if ($key !== "creator") {
                         $akten_loop = [];
-                        $akten_loop["key"] = $main->sonderzeichenhinzufügen($txt[$key]??"");
+                        $akten_loop["key"] = $main->sonderzeichenhinzufügen($txt[$key] ?? "");
                         $akten_loop["value"] = $main->sonderzeichenhinzufügen($value);
                         $template->assign("akten_loop", $akten_loop);
                     }
                 }
                 $template->assign("creator", $row["data"]["creator"]);
-                $template->assign("released",(int)$_SESSION["access"]===(int)$row["access"] || (int)$_SESSION["access"]===0);
-                $template->assign("release",((int)$row['release']===0?"":"Freigegeben für das ".$fracsys->name($row['release'])));
+                $template->assign("released", (int)$_SESSION["access"] === (int)$row["access"] || (int)$_SESSION["access"] === 0);
+                $template->assign("release", ((int)$row['release'] === 0 ? "" : "Freigegeben für das " . $fracsys->name($row['release'])));
             } else {
                 echo('<script>alert("Die Akte konnte nicht gefunden werden!"); window.location="index.php?site=akten-all";</script>');
             }
@@ -95,23 +95,32 @@ if ((int)$loginstatus === 1) {
         {
             if (isset($_POST["createakte"])) {
                 $access = $_GET['frac'] === "pd" ? "1" : "2";
-                $date = date("d.m.Y", strtotime($_POST["date"]));
                 $akten = new aktensys();
                 $dataarray = [];
-                foreach($_POST as $key=>$value)
-                {
-                    if($key !== "createakte" && $key !== "name")
-                    {
+                foreach ($_POST as $key => $value) {
+                    if ($key !== "createakte" && $key !== "name" && $key !== "date") {
                         $dataarray[$key] = $value;
+                    }
+                    if ($key === "date") {
+                        $dataarray[$key] = date("d.m.Y", strtotime($value));
                     }
                 }
                 $dataarray["creator"] = $_SESSION["name"];
                 $id = $akten->set($main->sonderzeichenentfernen($_POST["name"]), $access, $dataarray);
                 header("location: index.php?site=akte&id=$id");
             } else {
-                $txt = $fracsys->text("akte-create",(int)$_SESSION['access']);
+                $getperson = [];
+                if (isset($_GET['person'])) {
+                    require_once(__DIR__ . "/assets/php/person.php");
+                    $person = new person($_GET['person'] ?? -1);
+                    $getperson = $person->get();
+                }
+                $txt = $fracsys->text("akte-create", (int)$_SESSION['access']);
                 $template->assign("title", $txt["title"]);
                 $template->assign("text", $txt["text"]);
+                $template->assign("name", $main->sonderzeichenhinzufügen($getperson["name"] ?? ""));
+                $template->assign("gb", $main->sonderzeichenhinzufügen($getperson["birthday"] ?? ""));
+                $template->assign("tel", $main->sonderzeichenhinzufügen($getperson["data"]["tel"] ?? "555"));
                 $template->assign("date", date("Y-m-d"));
                 $template->parse("akten/akten-create.tpl");
             }
@@ -150,15 +159,16 @@ if ((int)$loginstatus === 1) {
                 $date = date("d.m.Y", strtotime($_POST["date"]));
                 $akten = new aktensys($id);
                 $dataarray = array();
-                foreach($_POST as $key=>$value)
-                {
-                    if($key !=="release" && $key !== "name" && $key !== "editakte"){
+                foreach ($_POST as $key => $value) {
+                    if ($key !== "release" && $key !== "name" && $key !== "editakte") {
                         $dataarray[$key] = $main->sonderzeichenentfernen($value);
                     }
                 }
                 $dataarray["creator"] = $_SESSION["name"];
                 $akten->update($main->sonderzeichenentfernen($_POST["name"]), $dataarray);
-                if($akten->updaterelese($_POST["release"])){ echo('<script>alert("Die Akte wurde erfolgreich bearbeitet!"); window.location="index.php?site=akte&id='.$id.'";</script>');}
+                if ($akten->updaterelese($_POST["release"])) {
+                    echo('<script>alert("Die Akte wurde erfolgreich bearbeitet!"); window.location="index.php?site=akte&id=' . $id . '";</script>');
+                }
             } else {
                 $akte = new aktensys($id);
                 $row = $akte->get();
@@ -166,20 +176,20 @@ if ((int)$loginstatus === 1) {
                 if ($isset) {
                     $template->assign("id", $row["id"]);
                     $template->assign("name", $main->sonderzeichenhinzufügen($row["name"]));
-                    $txt = $fracsys->text("akte",(int)$row['access']);
+                    $txt = $fracsys->text("akte", (int)$row['access']);
                     foreach ($row["data"] as $key => $value) {
-                        if($key !== "creator" && $key !== "name") {
+                        if ($key !== "creator" && $key !== "name") {
                             $akten_loop = [];
-                            $akten_loop["name"] = $main->sonderzeichenhinzufügen($txt[$key]??"");
-                            $akten_loop["name1"] = $main->sonderzeichenhinzufügen($txt[$key]??"");
-                            $akten_loop["key"] = ($key??"");
+                            $akten_loop["name"] = $main->sonderzeichenhinzufügen($txt[$key] ?? "");
+                            $akten_loop["name1"] = $main->sonderzeichenhinzufügen($txt[$key] ?? "");
+                            $akten_loop["key"] = ($key ?? "");
                             $akten_loop["value"] = $main->sonderzeichenhinzufügen($value);
                             $template->assign("akten_loop", $akten_loop);
                         }
                     }
-                    $template->assign("releaseselect0",$row["release"]===0?"selected":"");
-                    $template->assign("releaseselect1",$row["release"]===1?"selected":"");
-                    $template->assign("releaseselect2",$row["release"]===2?"selected":"");
+                    $template->assign("releaseselect0", $row["release"] === 0 ? "selected" : "");
+                    $template->assign("releaseselect1", $row["release"] === 1 ? "selected" : "");
+                    $template->assign("releaseselect2", $row["release"] === 2 ? "selected" : "");
                 } else {
                     echo('<script>alert("Die Akte konnte nicht gefunden werden!"); window.location="index.php?site=akten-all";</script>');
                 }
@@ -302,7 +312,8 @@ if ((int)$loginstatus === 1) {
         #region bußgeld
         //bußgeld system
 
-        case "fine":{
+        case "fine":
+        {
             $fine = new bußgeld((int)$_SESSION["access"]);
             $getfine = $fine->get();
             $txt = $fracsys->text("fine", $_SESSION["access"]);
@@ -314,7 +325,7 @@ if ((int)$loginstatus === 1) {
                 $fine_loop["name"] = $main->sonderzeichenhinzufügen($value["name"]);
                 $fine_loop["fine"] = $main->sonderzeichenhinzufügen($value['geld']);
                 $fine_loop["frac"] = $fracsys->name($value['access']);
-                $fine_loop["leader1"] = (int)$_SESSION["rang"] === 1 ? '<td><a class="btn btn-primary" href="index.php?site=fine-edit&id='.$value['id'].'">Ändern</a></td>' : "";
+                $fine_loop["leader1"] = (int)$_SESSION["rang"] === 1 ? '<td><a class="btn btn-primary" href="index.php?site=fine-edit&id=' . $value['id'] . '">Ändern</a></td>' : "";
                 $template->assign("fine_loop", $fine_loop);
             }
             $template->assign("leader", (int)$_SESSION["rang"] === 1);
@@ -325,7 +336,8 @@ if ((int)$loginstatus === 1) {
             break;
         }
 
-        case "fine-add":{
+        case "fine-add":
+        {
             if ((int)$_SESSION["rang"] !== 1) {
                 header("Location: index.php");
             }
@@ -343,21 +355,22 @@ if ((int)$loginstatus === 1) {
             break;
         }
 
-        case "fine-edit":{
-            $id = $_POST["id"]?? $_GET["id"] ?? 0;
+        case "fine-edit":
+        {
+            $id = $_POST["id"] ?? $_GET["id"] ?? 0;
             if ((int)$_SESSION["rang"] !== 1 || $id === 0) {
                 header("Location: index.php");
             }
             if (isset($_POST["editfine"])) {
-                $fine = new bußgeld(0,(int)$id);
-                $access = (int)$_SESSION["access"]===0 ? (int)$fine->get()["access"] : (int)$_SESSION["access"];
+                $fine = new bußgeld(0, (int)$id);
+                $access = (int)$_SESSION["access"] === 0 ? (int)$fine->get()["access"] : (int)$_SESSION["access"];
                 $fine->set_access($access);
                 $fine->edit($_POST["paragraf"], $_POST["name"], $_POST["geld"]);
                 echo('<script>alert("Der Bußgeld wurde bearbeitet!"); window.location="index.php?site=fine";</script>');
             }
-            $fine = new bußgeld(0,(int)$id);
+            $fine = new bußgeld(0, (int)$id);
             $getfine = $fine->get();
-            if(count($getfine) === 0){
+            if (count($getfine) === 0) {
                 echo('<script>alert("Das Bußgeld wurde nicht gefunden!"); window.location="index.php?site=fine";</script>');
             }
             $txt = $fracsys->text("fine-edit", $_SESSION["access"]);
@@ -373,6 +386,145 @@ if ((int)$loginstatus === 1) {
 
         #endregion bußgeld
 
+        #region person
+
+        case "person":
+        {
+            require_once(__DIR__ . "/assets/php/person.php");
+            $id = $_GET["id"] ?? 0;
+            $person = new person($id);
+            $getperson = $person->get();
+            if (count($getperson) === 0) {
+                echo('<script>alert("Die Person wurde nicht gefunden!"); window.location="index.php";</script>');
+            }
+            if ($id === 0) {
+                foreach ($getperson as $key => $value) {
+                    $person_loop = [];
+                    $person_loop["id"] = $value["id"];
+                    $person_loop["name"] = $value["name"];
+                    $person_loop["date"] = $value["birthday"];
+                    $person_loop["wanted"] = $value["wanted"] ? '<p style="color: #ff0000">JA!</p>' : "Nein";
+                    $template->assign("person_loop", $person_loop);
+                }
+                $template->assign("hasperson", true);
+            } else {
+                $template->assign("id", $id);
+                $template->assign("name", $getperson["name"]);
+                $template->assign("wanted", $getperson["wanted"]);
+                $template->assign("wanted1", $getperson["wanted"]);
+                $template->assign("dead", !$getperson["isalive"]);
+                $template->assign("pstate", (!$getperson["isalive"] ? "dead" : ($getperson["wanted"] ? "wanted" : "")));
+                $template->assign("birthday", $getperson["birthday"]);
+                $template->assign("tel", $getperson["data"]["tel"]);
+                $template->assign("adress", $getperson["data"]["adress"]);
+                $file = "";
+                foreach (($getperson["data"]["files"]) as $key => $value) {
+                    $file .= '<a class="btn btn-primary" target="_blank" href="/files/' . $value . '">' . $value . '</a>     ';
+                }
+                $template->assign("files", $file);
+                $akte = "";
+                $pd = 0;
+                $mc = 0;
+                foreach (($getperson["data"]["akte"]) as $key) {
+                    if(str_contains($key,"911")) {
+                        $pd++;
+                        $akte .= '<a class="btn btn-info" href="index.php?site=akte&id=' . $key . '">PD Akte #'.$pd.'</a>     ';
+                    }else{
+                        $mc++;
+                        $akte .= '<a class="btn btn-danger" href="index.php?site=akte&id=' . $key . '">MC Akte #' . $mc . '</a>     ';
+                    }
+                }
+                $template->assign("akte", $akte);
+                $template->assign("hasakte", $akte!=="");
+                $template->assign("wantedfor", $getperson["data"]["wantedfor"]);
+                $template->assign("hasperson", false);
+            }
+            $template->parse("person/person.tpl");
+            break;
+        }
+
+        case "person-add":
+        {
+            require_once(__DIR__ . "/assets/php/person.php");
+            $person = new person();
+            if (isset($_POST["addperson"])) {
+                $fadd = [];
+                if (isset($_FILES["files"])) {
+                    $files = $main->reArrayFiles($_FILES['files']);
+                    $uploaddir = __DIR__ . '/files/';
+                    foreach ($files as $f) {
+                        $uploadfile = $uploaddir . basename($f['name']);
+                        if (move_uploaded_file($f['tmp_name'], $uploadfile)) {
+                            $fadd[] = basename($f['name']);
+                        }
+                    }
+                }
+                $data = [
+                    "wantedfor" => $_POST["wantedfor"] ?? "",
+                    "tel" => $_POST["tel"] ?? "",
+                    "adress" => $_POST["adress"] ?? "",
+                    "akten" => $_POST["akten"] ?? "",
+                    "files" => $fadd
+                ];
+                $id = $person->add($_POST["name"], date("d.m.Y", strtotime($_POST["gb"] ?? date("Y-m-d"))), $data);
+                $person->setID($id);
+                $person->setAlive($_POST["alive"] ?? false);
+                $person->setWanted($_POST["wanted"] ?? false);
+                echo('<script>alert("Die Person wurde erstellt!"); window.location="index.php?site=person&id=' . $id . '";</script>');
+            }
+            $template->parse("person/person-add.tpl");
+            break;
+        }
+
+        case "person-edit":
+        {
+            require_once(__DIR__ . "/assets/php/person.php");
+            $id = $_GET["id"] ?? 0;
+            $person = new person($id);
+            $getperson = $person->get();
+            if (count($getperson) === 0) {
+                echo('<script>alert("Die Person wurde nicht gefunden!"); window.location="index.php";</script>');
+            }
+            if (isset($_POST["editperson"])) {
+                $fadd = $getperson["data"]["files"];
+                if (isset($_FILES["files"])) {
+                    $files = $main->reArrayFiles($_FILES['files']);
+                    $uploaddir = __DIR__ . '/files/';
+                    foreach ($files as $f) {
+                        $uploadfile = $uploaddir . basename($f['name']);
+                        if (move_uploaded_file($f['tmp_name'], $uploadfile)) {
+                            $fadd[] = basename($f['name']);
+                        }
+                    }
+                }
+                $data = [
+                    "wantedfor" => $_POST["wantedfor"] ?? "",
+                    "tel" => $_POST["tel"],
+                    "adress" => $_POST["adress"],
+                    "akte" => $_POST["akten"] ?? $getperson["data"]["akte"] ?? [],
+                    "files" => $fadd
+                ];
+                $person->update($_POST["name"], date("d.m.Y", strtotime($_POST["gb"] ?? date("Y-m-d"))), $data);
+                $person->setAlive($_POST["alive"] ?? false);
+                $person->setWanted($_POST["wanted"] ?? false);
+                echo('<script>alert("Die Person wurde bearbeitet!"); window.location="index.php?site=person&id=' . $id . '";</script>');
+            }
+            $template->assign("id", $id);
+            $template->assign("name", $getperson["name"]);
+            $template->assign("gb", date("Y-m-d", strtotime($getperson["birthday"])));
+            $template->assign("tel", $getperson["data"]["tel"]);
+            $template->assign("adress", $getperson["data"]["adress"]);
+            $template->assign("wanted", $getperson["wanted"] ? "checked" : "");
+            $template->assign("alive", $getperson["isalive"] ? "checked" : "");
+            $template->assign("wantedtext", $getperson["wanted"] ? "block" : "none");
+            $template->assign("wantedfor", $getperson["data"]["wantedfor"]);
+            $template->parse("person/person-edit.tpl");
+            break;
+        }
+
+        #endregion person
+
+        #region index
         case "pw-edit":
         {
             if (isset($_POST["pwedit"])) {
@@ -401,7 +553,7 @@ if ((int)$loginstatus === 1) {
 
         default:
         {
-            $akten = $mysql->count("SELECT `ID` FROM `akten`" . ((int)$_SESSION['access'] !== 0 ? " WHERE `Access` = '" . $_SESSION['access'] . "' OR `Freigabe` = '". $_SESSION['access'] ."'" : ""));
+            $akten = $mysql->count("SELECT `ID` FROM `akten`" . ((int)$_SESSION['access'] !== 0 ? " WHERE `Access` = '" . $_SESSION['access'] . "' OR `Freigabe` = '" . $_SESSION['access'] . "'" : ""));
             $rang = $_SESSION['rang'] ?? 0;
             $template->assign("teamsite", $rang > 0);
             $template->assign("aktenansehbar", $akten !== 0);
@@ -411,6 +563,8 @@ if ((int)$loginstatus === 1) {
             break;
         }
 
+        #endregion index
     }
+
+
 }
-?>

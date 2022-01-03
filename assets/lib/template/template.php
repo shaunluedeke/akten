@@ -2,28 +2,22 @@
 
 class template {
 
-    private $template_folder = null;
+    private string $template_folder = "";
 
-
-
-    //Ordnerpfad angeben
-    public function setTempFolder( $template_folder ) {
+    public function setTempFolder( $template_folder ): void
+    {
         $this->template_folder = $template_folder;
     }
 
-    private $vars = array();
-    private $l_delim = '{',
-        $r_delim = '}';
+    private array $vars = array();
 
-    //Variable übergeben
-    public function assign( $key, $value ) {
+    public function assign( $key, $value ): void
+    {
         if ( is_array( $value ) ) {
             if(!isset($this->vars[$key])) {
                 $this->vars[$key] = array();
-                array_push($this->vars[$key], $value);
-            } else {
-                array_push($this->vars[$key], $value);
             }
+            $this->vars[$key][] = $value;
             return;
         }
         $this->vars[$key] = $value;
@@ -31,12 +25,11 @@ class template {
 
 
     //abrufen
-    public function parse( $template_file = null) {
-        //Prüfen existiert ordnerpfad
-        if($this->template_folder != null) {
+    public function parse( $template_file = ""): void
+    {
+        if($this->template_folder !== "") {
             $template_file = $this->template_folder.$template_file;
         }
-        //Prüfen existiert file
         if ( !file_exists( $template_file ) ) {
             exit( '<h1>$template_file</h1><h1>Template error</h1>' );
         }
@@ -51,20 +44,22 @@ class template {
 
     private function parseContent( $key, $value, $content ) {
 
-        if ( is_array( $value ) ) { // ist ein Array (Loop schleife)
+        if ( is_array( $value ) ) {
             $content = $this->parseLoop($key, $value, $content);
-        } else if(is_bool ( $value ) ) { // ist ein Boolean (Abfrage)
+        } else if(is_bool ( $value ) ) {
             $content = $this->parseIf($key, $value, $content);
             $content = $this->parseIfNot($key, $value, $content);
-        } else { // rest (Varriable)
-            $content = $this->parseSingle($key, (string) $value, $content, null);
+        } else {
+            $content = $this->parseSingle($key, (string)$value, $content);
         }
         return $content;
     }
 
     private function parseLoop( $key, $value, $content ) {
         $match = $this->matchLoop($content, $key);
-        if( $match == false ) return $content;
+        if( $match === false ) {
+            return $content;
+        }
         $str='';
         foreach ( $value as $index ) {
             $cmatch=$match['1'];
@@ -79,18 +74,18 @@ class template {
     }
 
 
-    private function parseSingle( $key, $value, $string, $index ) {
-        if ( isset( $index ) ) {
-            $string = str_replace( $this->l_delim . '%index%' . $this->r_delim, $index, $string );
-        }
-        return str_replace( $this->l_delim . $key . $this->r_delim, $value, $string );
+    private function parseSingle($key, $value, $string): array|string
+    {
+        return str_replace( "{".($key)."}", $value, $string );
     }
 
     private function parseIf( $variable, $data, $string ) {
 
         $match = $this->matchIf($string, $variable);
 
-        if( $match == false ) return $string;
+        if( $match === false ) {
+            return $string;
+        }
         if($data) {
             return str_replace( $match['0'], $match['1'], $string);
         }
@@ -101,7 +96,9 @@ class template {
 
         $match = $this->matchIfNot($string, $variable);
 
-        if( $match == false ) return $string;
+        if( $match === false ) {
+            return $string;
+        }
         if(!$data) {
             return str_replace( $match['0'], $match['1'], $string);
         }
@@ -111,21 +108,21 @@ class template {
 
 
     private function matchLoop( $string, $variable ) {
-        if ( !preg_match("|" . preg_quote($this->l_delim) . 'loop ' . $variable . preg_quote($this->r_delim) . "(.+?)". preg_quote($this->l_delim) . 'endloop '  . $variable . preg_quote($this->r_delim) . "|s", $string, $match ) ) {
+        if ( !preg_match("|" . '{loop ' . $variable ."}(.+?)". '{/loop}' . "|s", $string, $match ) ) {
             return false;
         }
 
         return $match;
     }
     private function matchIf( $string, $variable ) {
-        if ( !preg_match("|" . preg_quote($this->l_delim) . 'if ' . $variable . preg_quote($this->r_delim) . "(.+?)". preg_quote($this->l_delim) . 'endif '  . $variable . preg_quote($this->r_delim) . "|s", $string, $match ) ) {
+        if ( !preg_match("|".'{if ' . $variable .'}(.+?)'. '{/if'. "}|s", $string, $match ) ) {
             return false;
         }
 
         return $match;
     }
     private function matchIfNot( $string, $variable ) {
-        if ( !preg_match("|" . preg_quote($this->l_delim) . 'if not ' . $variable . preg_quote($this->r_delim) . "(.+?)". preg_quote($this->l_delim) . 'endif not '  . $variable . preg_quote($this->r_delim) . "|s", $string, $match ) ) {
+        if ( !preg_match("|".'{if not ' . $variable .'}(.+?)'. '{/if not' . "}|s", $string, $match ) ) {
             return false;
         }
 

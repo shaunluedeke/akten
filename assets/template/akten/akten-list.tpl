@@ -40,7 +40,7 @@
             <datalist id="brow">
                 {loop user_loop}
                 <option value="{user_loop_uuid}">{user_loop_name}</option>
-                {endloop user_loop}
+                {/loop}
             </datalist>
             <br><br>
             <input type="submit" name="userlist" value="Akte Erstellen">

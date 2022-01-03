@@ -57,7 +57,7 @@
           <th scope="col" data-sortable="true" data-field="frac">Fraction</th>
           {if leader}
           <th scope="col" data-sortable="false" data-field="creater">Ändern</th>
-          {endif leader}
+          {/if}
         </tr>
         </thead>
         <tbody>
@@ -69,26 +69,26 @@
           <td>{fine_loop_frac}</td>
            {fine_loop_leader1}
         </tr>
-        {endloop fine_loop}
+        {/loop}
         {if leader3}
         <tr aria-sort="none"><td colspan="5" style="text-align: center"><a class="btn btn-success" href="index.php?site=fine-add">Hinzufügen</a></td></tr>
-        {endif leader3}
+        {/if}
         </tbody>
       </table>
     </div>
   </center>
 </div>
-{endif hasfine}
+{/if}
 {if not hasfine}
 <div class="login-form" style="text-align: center;">
   <h3 style="color: black">Es gibt keine Bußgelder!</h3>
   <br><br><br><br><br><br>
   {if leader2}
   <a class="btn btn-success" href="index.php?site=fine-add">Hinzufügen</a>
-  {endif leader2}
+  {/if}
   <a class="btn btn-danger" href="index.php">Zurück</a>
 </div>
-{endif not hasfine}
+{/if not}
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>

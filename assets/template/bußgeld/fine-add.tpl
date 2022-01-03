@@ -70,7 +70,7 @@
                     <option style="color: black;" value="2">LSMC</option>
                 </select>
             </div>
-            {endif verwaltung}
+            {/if}
             <br>
             <br>
             <button type="submit" name="createfine" class="btn btn-primary">Speichern</button>

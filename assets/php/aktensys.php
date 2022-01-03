@@ -57,8 +57,14 @@ class aktensys
     public function delete(): bool
     {
         if ($this->id !== 0) {
-            $mysql = $this->main->getSQL();
-            return $mysql->query("DELETE FROM `akten` WHERE `ID`='$this->id'");
+            require_once(__DIR__ . '/person.php');
+            $person = new person();
+            $pid = $person->getID($this->get()["name"]);
+            if($pid !== 0) {
+                $person->setID($pid);
+                $person->removeAkte($this->id);
+            }
+            return $this->main->getSQL()->query("DELETE FROM `akten` WHERE `ID`='$this->id'");
         }
         return false;
     }
@@ -68,6 +74,21 @@ class aktensys
         $id = $this->main->generateAktenID((int)$access);
         try {
             $this->main->getSQL()->query("INSERT INTO `akten`(`ID`, `Name`, `Data`, `Access`) VALUES ('$id','$name','" . json_encode($data, JSON_THROW_ON_ERROR) . "','$access')");
+            require_once(__DIR__ . '/person.php');
+            $person = new person();
+            $pid = $person->getID($name);
+            if ($pid === 0) {
+                $data = [
+                    "wantedfor" => "",
+                    "tel" => $data["tel"] ?? "",
+                    "adress" => $data["adress"] ?? "",
+                    "akten" => [],
+                    "files" => []
+                ];
+                $pid = $person->add($_POST["name"], date("d.m.Y",strtotime($data["gb"] ?? date("Y-m-d"))),$data);
+            }
+            $person->setID($pid);
+            $person->addAkte($id);
         } catch (JsonException $e) {
         }
         return $id;

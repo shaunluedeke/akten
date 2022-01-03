@@ -4,6 +4,7 @@ class person
 {
     private int $id;
     private main $main;
+
     public function __construct(int $id=0)
     {
         $this->id = $id;
@@ -11,7 +12,7 @@ class person
         $this->main = new main();
     }
 
-    public function set_id(int $id):void
+    public function setID(int $id):void
     {
         $this->id = $id;
     }
@@ -100,4 +101,41 @@ class person
         return $i;
     }
 
+    public function getID(string $name=""):int{
+        if($name === ""){
+            return $this->id;
+        }
+        $mysql = $this->main->getSQL();
+        $result = $mysql->result("SELECT `ID` FROM `personregister` WHERE `Name`='$name'");
+        while ($row = mysqli_fetch_array($result)) {
+            return $row['ID'];
+        }
+        return 0;
+    }
+
+    public function addAkte($id):bool{
+        if($this->id === 0){
+            return false;
+        }
+        $d = $this->get();
+        $a = $d["data"]["akte"] ?? array();
+        $a[] = $id;
+        $d["data"]["akte"] = $a;
+        return $this->update($d["name"],$d["birthday"],$d["data"]);
+    }
+
+    public function removeAkte($id):bool{
+        if($this->id === 0){
+            return false;
+        }
+        $d = $this->get();
+        if(!isset($d["data"]["akte"])){
+            return false;
+        }
+        $key = array_search($id, $d["data"]["akte"], true);
+        if (false !== $key) {
+            unset($d["data"]["akte"][$key]);
+        }
+        return $this->update($d["name"],$d["birthday"],$d["data"]);
+    }
 }

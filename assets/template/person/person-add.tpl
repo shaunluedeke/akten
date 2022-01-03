@@ -58,35 +58,60 @@
 
     </div>
     <div class="form">
-        <h1>Akte {id} ändern</h1>
-        <form action="index.php?site=akten-edit&id={id}" method="POST">
+        <h1>Person Hinzufügen</h1>
+        <form action="index.php?site=person-add" enctype="multipart/form-data" method="POST">
             <div class="form-group">
                 <label for="exampleInputEmail1">Name</label>
-                <input type="text" class="form-control" name="name" placeholder="Name" required value="{name}">
+                <input type="text" class="form-control" name="name" placeholder="Name" required >
             </div>
-            <br>
-            {loop akten_loop}
-                <div class="form-group">
-                    <label for="exampleInputEmail1">{akten_loop_name}</label>
-                    <input type="text" class="form-control" name="{akten_loop_key}" placeholder="{akten_loop_name1}"
-                           value="{akten_loop_value}">
-                </div>
-                <br>
-            {/loop}
             <div class="form-group">
-                <label for="exampleInputEmail1">Freigabe für</label>
-                <label>
-                    <select class="form-select" name="release">
-                        <option style="color: black;" {releaseselect0} value="0">Keinen</option>
-                        <option style="color: black;" {releaseselect1} value="1">LSPD</option>
-                        <option style="color: black;" {releaseselect2} value="2">LSMC</option>
-                    </select>
-                </label>
+                <label for="exampleInputEmail1">Geburtsdatum</label>
+                <input type="date" class="form-control" name="gb" placeholder="Geburtsdatum" >
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Telefonnummer</label>
+                <input type="text" class="form-control" name="tel" placeholder="Telefonnummer">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Adresse</label>
+                <input type="text" class="form-control" name="adress" placeholder="Adresse" required>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Files</label>
+                <input type="file" class="form-control" name="files[]" multiple>
             </div>
             <br>
-            <button type="submit" name="editakte" class="btn btn-primary">Speichern</button>
+            <div class="form-group">
+                <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                    <input type="checkbox" class="btn-check" name="wanted" id="wantedcheck" onclick="wantedtoggle()">
+                    <label class="btn btn-outline-primary" for="wantedcheck">Wird gesucht</label>
+
+                    <input type="checkbox" class="btn-check" name="alive" id="btncheck2" checked>
+                    <label class="btn btn-outline-secondary" for="btncheck2">Am Leben</label>
+                </div>
+            </div>
+            <br>
+            <div class="form-group" id="wantedtext" style="display: none">
+                <label for="exampleInputEmail1">Gesucht für</label>
+                <input type="text" class="form-control" name="wantedfor" placeholder="Wanted">
+            </div>
+            <br>
+            <p><a class="btn btn-danger" href="index.php?site=person&id={id}">Zurück</a>
+                <button type="submit" name="editperson" class="btn btn-primary">Speichern</button></p>
+
         </form>
     </div>
 </div>
+<script>
+
+    function wantedtoggle() {
+        if (document.getElementById("wantedtext").style.display === "none") {
+            document.getElementById("wantedtext").style.display = "block";
+        } else {
+            document.getElementById("wantedtext").style.display = "none";
+        }
+    }
+
+</script>
 </body>
 </html>
