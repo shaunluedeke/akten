@@ -63,23 +63,27 @@
             <div class="form-group">
                 <label for="exampleInputEmail1">Name</label>
                 <input type="text" class="form-control" name="name" placeholder="Name" required >
-            </div>
+            </div><br>
             <div class="form-group">
                 <label for="exampleInputEmail1">Geburtsdatum</label>
                 <input type="date" class="form-control" name="gb" placeholder="Geburtsdatum" >
-            </div>
+            </div><br>
             <div class="form-group">
                 <label for="exampleInputEmail1">Telefonnummer</label>
                 <input type="text" class="form-control" name="tel" placeholder="Telefonnummer">
-            </div>
+            </div><br>
             <div class="form-group">
                 <label for="exampleInputEmail1">Adresse</label>
                 <input type="text" class="form-control" name="adress" placeholder="Adresse">
-            </div>
+            </div><br>
             <div class="form-group">
                 <label for="exampleInputEmail1">Fraction</label>
                 <input type="text" class="form-control" name="frac" placeholder="Fraction">
-            </div>
+            </div><br>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Licensen</label>
+                <input type="text" class="form-control" name="license" placeholder="Licensen">
+            </div><br>
             <div class="form-group">
                 <label for="exampleInputEmail1">Files</label>
                 <input type="file" class="form-control" name="files[]" multiple>

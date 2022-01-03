@@ -81,6 +81,10 @@
                 <input type="text" class="form-control" name="frac" placeholder="Fraction" value="{frac}">
             </div><br>
             <div class="form-group">
+                <label for="exampleInputEmail1">Licensen</label>
+                <input type="text" class="form-control" name="license" placeholder="Licensen" value="{license}">
+            </div><br>
+            <div class="form-group">
                 <label for="exampleInputEmail1">New Files</label>
                 <input type="file" class="form-control" name="files[]" multiple>
             </div>

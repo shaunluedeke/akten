@@ -95,9 +95,9 @@ class person
 
     private function randomint():int{
         require_once(__DIR__."/../lib/random/random.php");
-        $i = random::getInt(8);
+        $i = $this->main->getSQL()->count("SELECT `ID` FROM `personregister`")+1;
         while($this->main->getSQL()->count("SELECT `ID` FROM `personregister` WHERE `ID`='$i'")>0){
-            $i = random::getInt(8);
+            $i = $this->main->getSQL()->count("SELECT `ID` FROM `personregister`")+1;
         }
         return $i;
     }

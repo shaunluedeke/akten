@@ -154,6 +154,10 @@
                         <th scope="row">Fraction</th>
                         <td>{frac}</td>
                     </tr>
+                    <tr>
+                        <th scope="row">Licensen</th>
+                        <td>{license}</td>
+                    </tr>
                     {if wanted}
                     <tr>
                         <th scope="row">Wird gesucht für</th>

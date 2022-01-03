@@ -444,6 +444,7 @@ if ((int)$loginstatus === 1) {
                 $template->assign("akte", $akte);
                 $template->assign("hasakte", $akte!=="");
                 $template->assign("wantedfor", $getperson["data"]["wantedfor"]);
+                $template->assign("license", ($getperson["data"]["license"] ?? ""));
                 $template->assign("hasperson", false);
             }
             $template->parse("person/person.tpl");
@@ -472,6 +473,7 @@ if ((int)$loginstatus === 1) {
                     "adress" => ($_POST["adress"] ?? ""),
                     "akte" => ($_POST["akten"] ?? []),
                     "frac" => ($_POST["frac"] ?? ""),
+                    "license" => ($_POST["license"] ?? ""),
                     "files" => ($fadd)
                 ];
                 $id = $person->add($_POST["name"], date("d.m.Y", strtotime($_POST["gb"] ?? date("Y-m-d"))), $data);
@@ -511,6 +513,7 @@ if ((int)$loginstatus === 1) {
                     "adress" => $_POST["adress"]?? "",
                     "akte" => $_POST["akten"] ?? $getperson["data"]["akte"] ?? [],
                     "files" => $fadd,
+                    "license" => ($_POST["license"] ?? ""),
                     "frac" => $_POST["frac"] ?? $getperson["data"]["frac"] ?? ""
                 ];
                 $person->update($_POST["name"], date("d.m.Y", strtotime($_POST["gb"] ?? date("Y-m-d"))), $data);
@@ -526,6 +529,7 @@ if ((int)$loginstatus === 1) {
             $template->assign("frac", $getperson["data"]["frac"] ?? "");
             $template->assign("wanted", $getperson["wanted"] ? "checked" : "");
             $template->assign("alive", $getperson["isalive"] ? "checked" : "");
+            $template->assign("license", ($getperson["data"]["license"] ?? ""));
             $template->assign("wantedtext", $getperson["wanted"] ? "block" : "none");
             $template->assign("wantedfor", $getperson["data"]["wantedfor"]);
             $template->parse("person/person-edit.tpl");
