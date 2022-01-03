@@ -145,9 +145,14 @@
                         <th scope="row">Telefon Nummer</th>
                         <td>{tel}</td>
                     </tr>
+
                     <tr>
                         <th scope="row">Adresse</th>
                         <td>{adress}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Fraction</th>
+                        <td>{frac}</td>
                     </tr>
                     {if wanted}
                     <tr>

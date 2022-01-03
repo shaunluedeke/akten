@@ -77,6 +77,10 @@
                 <input type="text" class="form-control" name="adress" placeholder="Adresse" required>
             </div>
             <div class="form-group">
+                <label for="exampleInputEmail1">Fraction</label>
+                <input type="text" class="form-control" name="frac" placeholder="Fraction">
+            </div>
+            <div class="form-group">
                 <label for="exampleInputEmail1">Files</label>
                 <input type="file" class="form-control" name="files[]" multiple>
             </div>

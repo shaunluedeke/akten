@@ -416,6 +416,7 @@ if ((int)$loginstatus === 1) {
                 $template->assign("pstate", (!$getperson["isalive"] ? "dead" : ($getperson["wanted"] ? "wanted" : "")));
                 $template->assign("birthday", $getperson["birthday"]);
                 $template->assign("tel", $getperson["data"]["tel"]);
+                $template->assign("frac", $getperson["data"]["frac"] ?? "");
                 $template->assign("adress", $getperson["data"]["adress"]);
                 $file = "";
                 foreach (($getperson["data"]["files"]) as $key => $value) {
@@ -464,6 +465,7 @@ if ((int)$loginstatus === 1) {
                     "tel" => $_POST["tel"] ?? "",
                     "adress" => $_POST["adress"] ?? "",
                     "akten" => $_POST["akten"] ?? "",
+                    "frac" => $_POST["frac"] ?? "",
                     "files" => $fadd
                 ];
                 $id = $person->add($_POST["name"], date("d.m.Y", strtotime($_POST["gb"] ?? date("Y-m-d"))), $data);
@@ -499,10 +501,11 @@ if ((int)$loginstatus === 1) {
                 }
                 $data = [
                     "wantedfor" => $_POST["wantedfor"] ?? "",
-                    "tel" => $_POST["tel"],
-                    "adress" => $_POST["adress"],
+                    "tel" => $_POST["tel"]?? "",
+                    "adress" => $_POST["adress"]?? "",
                     "akte" => $_POST["akten"] ?? $getperson["data"]["akte"] ?? [],
-                    "files" => $fadd
+                    "files" => $fadd,
+                    "frac" => $_POST["frac"] ?? $getperson["data"]["frac"] ?? ""
                 ];
                 $person->update($_POST["name"], date("d.m.Y", strtotime($_POST["gb"] ?? date("Y-m-d"))), $data);
                 $person->setAlive($_POST["alive"] ?? false);
@@ -514,6 +517,7 @@ if ((int)$loginstatus === 1) {
             $template->assign("gb", date("Y-m-d", strtotime($getperson["birthday"])));
             $template->assign("tel", $getperson["data"]["tel"]);
             $template->assign("adress", $getperson["data"]["adress"]);
+            $template->assign("frac", $getperson["data"]["frac"] ?? "");
             $template->assign("wanted", $getperson["wanted"] ? "checked" : "");
             $template->assign("alive", $getperson["isalive"] ? "checked" : "");
             $template->assign("wantedtext", $getperson["wanted"] ? "block" : "none");
