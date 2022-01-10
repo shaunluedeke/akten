@@ -85,6 +85,10 @@
                 <input type="text" class="form-control" name="license" placeholder="Licensen" value="{license}">
             </div><br>
             <div class="form-group">
+                <label for="exampleInputEmail1">Notizen</label>
+                <input type="text" class="form-control" name="note" placeholder="Notizen" value="{note}">
+            </div><br>
+            <div class="form-group">
                 <label for="exampleInputEmail1">New Files</label>
                 <input type="file" class="form-control" name="files[]" multiple>
             </div>

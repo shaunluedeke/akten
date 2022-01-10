@@ -115,14 +115,14 @@
                     <td><a class="btn btn-primary" href="index.php?site=person&id={person_loop_id}">Daten &Ouml;ffnen</a>
                     </td>
                 </tr>
-                {/loop}
+                {/loop person_loop}
                 <tr aria-sort="none"><td colspan="6" style="text-align: center"><a class="btn btn-success" href="index.php?site=person-add">Hinzufügen</a></td></tr>
                 </tbody>
             </table>
         </div>
     </center>
 </div>
-{/if}
+{/if hasperson}
 {if not hasperson}
         <div id="content">
                 <div class="login-form {pstate}" style="text-align: center;height: 90%; width: 60%; background: #3e3c3c; ">
@@ -163,7 +163,7 @@
                         <th scope="row">Wird gesucht für</th>
                         <td>{wantedfor}</td>
                     </tr>
-                    {/if}
+                    {/if wanted}
                     <tr>
                         <th scope="row">Documente</th>
                         <td>{files}</td>
@@ -173,20 +173,24 @@
                         <th scope="row">Akten</th>
                         <td>{akte}</td>
                     </tr>
-                    {/if}
+                    {/if hasakte}
+                    <tr>
+                        <th scope="row">Notiz</th>
+                        <td>{note}</td>
+                    </tr>
                     </tbody>
                 </table>
                     {if dead}
                         <h2>Diese Person ist verstorben</h2>
-                    {/if}
+                    {/if dead}
                     {if wanted1}
                     <h2>Diese Person wird gesucht</h2>
-                    {/if}
+                    {/if wanted1}
                     <p><a class="btn btn-success" href="index.php?site=person-edit&id={id}">Daten ändern</a></p>
                 <a class="btn btn-danger" href="index.php?site=person">Zurück</a>
             </div>
         </div>
-{/if not}
+{/if not hasperson}
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>

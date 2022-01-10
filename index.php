@@ -77,7 +77,7 @@ if ((int)$loginstatus === 1) {
                     if ($key !== "creator") {
                         $akten_loop = [];
                         $akten_loop["key"] = $main->sonderzeichenhinzufügen($txt[$key] ?? "");
-                        $akten_loop["value"] = $main->sonderzeichenhinzufügen($value);
+                        $akten_loop["value"] = $main->sonderzeichenhinzufügen($value  ?? "");
                         $template->assign("akten_loop", $akten_loop);
                     }
                 }
@@ -100,7 +100,7 @@ if ((int)$loginstatus === 1) {
                 $dataarray = [];
                 foreach ($_POST as $key => $value) {
                     if ($key !== "createakte" && $key !== "name" && $key !== "date") {
-                        $dataarray[$key] = $value;
+                        $dataarray[$key] = $main->sonderzeichenentfernen($value);
                     }
                     if ($key === "date") {
                         $dataarray[$key] = date("d.m.Y", strtotime($value));
@@ -419,6 +419,7 @@ if ((int)$loginstatus === 1) {
                 $template->assign("tel", $getperson["data"]["tel"]);
                 $template->assign("frac", $getperson["data"]["frac"] ?? "");
                 $template->assign("adress", $getperson["data"]["adress"]);
+                $template->assign("note", $main->sonderzeichenhinzufügen($getperson["data"]["note"] ?? ""));
                 $file = "";
                 foreach (($getperson["data"]["files"]) as $key => $value) {
                     $file .= '<a class="btn btn-primary" target="_blank" href="/files/' . $value . '">' . $value . '</a>     ';
@@ -474,9 +475,17 @@ if ((int)$loginstatus === 1) {
                     "akte" => ($_POST["akten"] ?? []),
                     "frac" => ($_POST["frac"] ?? ""),
                     "license" => ($_POST["license"] ?? ""),
+                    "note" => ($main->sonderzeichenentfernen($_POST["note"] ?? "")),
                     "files" => ($fadd)
                 ];
+
                 $id = $person->add($_POST["name"], date("d.m.Y", strtotime($_POST["gb"] ?? date("Y-m-d"))), $data);
+                require_once(__DIR__."/assets/lib/discord/discord_auth.php");
+                $webhook = new discord_webhook();
+                $webhook->setTitle("Personenregister Add");
+                $webhook->setTxt($_POST["name"]." wurde hinzugefügt! [Link](http://rpakte.de/index.php?site=person&id=".$id.")");
+                $webhook->setColor((  "00ffff"));
+                $webhook->send();
                 $person->setID($id);
                 $person->setAlive($_POST["alive"] ?? false);
                 $person->setWanted($_POST["wanted"] ?? false);
@@ -514,8 +523,16 @@ if ((int)$loginstatus === 1) {
                     "akte" => $_POST["akten"] ?? $getperson["data"]["akte"] ?? [],
                     "files" => $fadd,
                     "license" => ($_POST["license"] ?? ""),
+                    "note" => ($main->sonderzeichenentfernen($_POST["note"] ?? $getperson["data"]["note"] ?? "")),
                     "frac" => $_POST["frac"] ?? $getperson["data"]["frac"] ?? ""
                 ];
+                    require_once(__DIR__."/assets/lib/discord/discord_auth.php");
+                    $webhook = new discord_webhook();
+                    $webhook->setTitle("Personenregister Update");
+                    $webhook->setTxt($getperson["name"]." wurde bearbeitet! [Link](http://rpakte.de/index.php?site=person&id=".$id.")");
+                    $webhook->setColor((  "00ffff"));
+                    $webhook->send();
+
                 $person->update($_POST["name"], date("d.m.Y", strtotime($_POST["gb"] ?? date("Y-m-d"))), $data);
                 $person->setAlive($_POST["alive"] ?? false);
                 $person->setWanted($_POST["wanted"] ?? false);
@@ -530,6 +547,7 @@ if ((int)$loginstatus === 1) {
             $template->assign("wanted", $getperson["wanted"] ? "checked" : "");
             $template->assign("alive", $getperson["isalive"] ? "checked" : "");
             $template->assign("license", ($getperson["data"]["license"] ?? ""));
+            $template->assign("note", ($main->sonderzeichenentfernen($getperson["data"]["note"] ?? "")));
             $template->assign("wantedtext", $getperson["wanted"] ? "block" : "none");
             $template->assign("wantedfor", $getperson["data"]["wantedfor"]);
             $template->parse("person/person-edit.tpl");

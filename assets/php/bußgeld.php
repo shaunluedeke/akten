@@ -40,6 +40,12 @@ class bußgeld
         $this->id = $this->id === 0 ? random::getInt() : $this->id;
         if(!isset($_SESSION)){session_start();}
         $this->access = $this->access === 0 ? (int)$_SESSION["access"] : $this->access;
+        require_once(__DIR__."/../lib/discord/discord_auth.php");
+        $webhook = new discord_webhook();
+        $webhook->setTitle("Bußgeld Hinzugefügt");
+        $webhook->setTxt("Ein Bußgeld wurde hinzugefügt! [Link](http://rpakte.de/index.php?site=fine)");
+        $webhook->setColor(("00ff00"));
+        $webhook->send();
         $this->main->getSQL()->query("INSERT INTO `geldkatalog`(`ID`, `Paragraf`, `Name`, `Geld`, `Access`) VALUES ('$this->id','$paragraf','$name','$geld','$this->access')");
         return $this->id;
     }
@@ -48,6 +54,14 @@ class bußgeld
     {
         if(!isset($_SESSION)){session_start();}
         $this->access = $this->access === 0 ? (int)$_SESSION["access"] : $this->access;
+
+        require_once(__DIR__."/../lib/discord/discord_auth.php");
+        $webhook = new discord_webhook();
+        $webhook->setTitle("Bußgeld Edit");
+        $webhook->setTxt("Ein Bußgeld wurde geändert! [Link](http://rpakte.de/index.php?site=fine)");
+        $webhook->setColor(("00ffff"));
+        $webhook->send();
+
         return $this->main->getSQL()->query("UPDATE `geldkatalog` SET `Paragraf`='$paragraf',`Name`='$name',`Geld`='$geld',`Access`='$this->access' WHERE `ID`='$this->id'");
     }
 

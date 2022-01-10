@@ -64,6 +64,12 @@ class aktensys
                 $person->setID($pid);
                 $person->removeAkte($this->id);
             }
+            require_once(__DIR__."/../lib/discord/discord_auth.php");
+            $webhook = new discord_webhook();
+            $webhook->setTitle("AktenSystem Delete");
+            $webhook->setTxt("Eine Akte wurde gelöscht! [Link](http://rpakte.de/index.php?site=akten-all)");
+            $webhook->setColor(("ff0000"));
+            $webhook->send();
             return $this->main->getSQL()->query("DELETE FROM `akten` WHERE `ID`='$this->id'");
         }
         return false;
@@ -83,12 +89,21 @@ class aktensys
                     "tel" => $data["tel"] ?? "",
                     "adress" => $data["adress"] ?? "",
                     "akten" => [],
+                    "note" => "",
                     "files" => []
                 ];
                 $pid = $person->add($_POST["name"], date("d.m.Y",strtotime($data["gb"] ?? date("Y-m-d"))),$data);
             }
             $person->setID($pid);
             $person->addAkte($id);
+
+            require_once(__DIR__."/../lib/discord/discord_auth.php");
+            $webhook = new discord_webhook();
+            $webhook->setTitle("AktenSystem Add");
+            $webhook->setTxt("Eine Akte wurde hinzugefügt! [Link](http://rpakte.de/index.php?site=akte&id=".$id.")");
+            $webhook->setColor(("00ffff"));
+            $webhook->send();
+
         } catch (JsonException $e) {
         }
         return $id;
@@ -100,6 +115,12 @@ class aktensys
             return false;
         }
         try {
+            require_once(__DIR__."/../lib/discord/discord_auth.php");
+            $webhook = new discord_webhook();
+            $webhook->setTitle("AktenSystem Update");
+            $webhook->setTxt("Eine Akte wurde geändert! [Link](http://rpakte.de/index.php?site=akte&id=".$this->id.")");
+            $webhook->setColor(("00ffff"));
+            $webhook->send();
             return $this->main->getSQL()->query("UPDATE `akten` SET `Name`='$name',`Data`='" . json_encode($data, JSON_THROW_ON_ERROR) . "' WHERE `ID`='$this->id'");
         } catch (JsonException $e) {
         }

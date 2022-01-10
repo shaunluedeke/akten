@@ -72,7 +72,7 @@
                            value="{akten_loop_value}">
                 </div>
                 <br>
-            {/loop}
+            {/loop akten_loop}
             <div class="form-group">
                 <label for="exampleInputEmail1">Freigabe für</label>
                 <label>

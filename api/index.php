@@ -85,7 +85,7 @@ switch($method){
             $action= $_POST['action'] ?? "";
             switch($action){
 
-                case "akten":{
+                case "akte":{
                     if($api->hasPermissions(2)){
                         header("Content-Type: application/json");
                         require_once(__DIR__ . "/../assets/php/aktensys.php");
@@ -166,7 +166,7 @@ switch($method){
             $action= $_POST['action'] ?? "";
             switch($action){
 
-                case "akten":{
+                case "akte":{
                     if($api->hasPermissions(2)){
                         header("Content-Type: application/json");
                         require_once(__DIR__ . "/../assets/php/aktensys.php");

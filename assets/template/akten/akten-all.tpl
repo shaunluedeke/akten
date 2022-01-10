@@ -69,20 +69,20 @@
                     <td>{akten_loop_frac}</td>
                     <td><a class="btn btn-primary" href="index.php?site=akte&id={akten_loop_id}">Akte &Ouml;ffnen</a></td>
                 </tr>
-                {/loop}
+                {/loop akten_loop}
                 </tbody>
             </table>
         </div>
             </center>
     </div>
-    {/if}
+    {/if hasakten}
     {if not hasakten}
     <div class="login-form" style="text-align: center;">
         <h3 style="color: black">Es gibt keine Akten!</h3>
         <br><br><br><br><br><br>
         <a class="btn btn-danger" href="index.php">Zurück</a>
     </div>
-    {/if not}
+    {/if not hasakten}
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>

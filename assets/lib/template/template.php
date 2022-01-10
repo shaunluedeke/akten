@@ -108,21 +108,21 @@ class template {
 
 
     private function matchLoop( $string, $variable ) {
-        if ( !preg_match("|" . '{loop ' . $variable ."}(.+?)". '{/loop}' . "|s", $string, $match ) ) {
+        if ( !preg_match("|" . '{loop ' . $variable ."}(.+?)". '{/loop '. $variable .'}' . "|s", $string, $match ) ) {
             return false;
         }
 
         return $match;
     }
     private function matchIf( $string, $variable ) {
-        if ( !preg_match("|".'{if ' . $variable .'}(.+?)'. '{/if'. "}|s", $string, $match ) ) {
+        if ( !preg_match("|".'{if ' . $variable .'}(.+?)'. '{/if '. $variable ."}|s", $string, $match ) ) {
             return false;
         }
 
         return $match;
     }
     private function matchIfNot( $string, $variable ) {
-        if ( !preg_match("|".'{if not ' . $variable .'}(.+?)'. '{/if not' . "}|s", $string, $match ) ) {
+        if ( !preg_match("|".'{if not ' . $variable .'}(.+?)'. '{/if not '. $variable ."}|s", $string, $match ) ) {
             return false;
         }
 

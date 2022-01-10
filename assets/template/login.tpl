@@ -45,7 +45,7 @@
         <a href="index.php?site=pw-edit">Password Ändern</a>
         {if teamsite}
         <a href="index.php?site=team">Team</a>
-        {/if}
+        {/if teamsite}
         <a href="index.php?site=logout">Logout</a>
 
 

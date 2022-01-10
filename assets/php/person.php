@@ -85,11 +85,29 @@ class person
 
     public function setAlive(bool $value = true):bool{
         $mysql = $this->main->getSQL();
+        $data = $this->get();
+        if($data["isalive"]!==$value){
+            require_once(__DIR__."/../lib/discord/discord_auth.php");
+            $webhook = new discord_webhook();
+            $webhook->setTitle("Personenregister Update");
+            $webhook->setTxt($data["name"] ." ist ". ($value ? "am Leben!" : "Verstorben!"));
+            $webhook->setColor(($value ? "000000" : "FFFFFF"));
+            $webhook->send();
+        }
         return $mysql->query("UPDATE `personregister` SET `IsAlive`='" . ($value ? "1" : "0") . "' WHERE `ID`='$this->id'");
     }
 
     public function setWanted(bool $value=false):bool{
         $mysql = $this->main->getSQL();
+        $data = $this->get();
+        if($data["wanted"]!==$value){
+            require_once(__DIR__."/../lib/discord/discord_auth.php");
+            $webhook = new discord_webhook();
+            $webhook->setTitle("Personenregister Update");
+            $webhook->setTxt($data["name"] ." wird ". ($value ? "Gesucht!" : "nicht mehr Gesucht!"));
+            $webhook->setColor(($value ? "FF0000" : "00FF00"));
+            $webhook->send();
+        }
         return $mysql->query("UPDATE `personregister` SET `Wanted`='" . ($value ? "1" : "0") . "' WHERE `ID`='$this->id'");
     }
 

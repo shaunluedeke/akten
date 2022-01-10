@@ -130,7 +130,7 @@
     <input type="number" name="access" max="2" min="0" required>
     <span data-placeholder="Access"></span>
     </div>
-  {/if}
+  {/if access}
   <input type="submit" class="logbtn" name ="register" value="Hinzufügen">
 
 
