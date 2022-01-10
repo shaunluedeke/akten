@@ -401,24 +401,24 @@ if ((int)$loginstatus === 1) {
             if ($id === 0) {
                 foreach ($getperson as $key => $value) {
                     $person_loop = [];
-                    $person_loop["id"] = $value["id"];
-                    $person_loop["name"] = $value["name"];
-                    $person_loop["date"] = $value["birthday"];
+                    $person_loop["id"] = $value["id"]?? "";
+                    $person_loop["name"] = $value["name"]?? "";
+                    $person_loop["date"] = $value["birthday"]?? "";
                     $person_loop["wanted"] = $value["wanted"] ? '<p style="color: #ff0000">JA!</p>' : "Nein";
                     $template->assign("person_loop", $person_loop);
                 }
                 $template->assign("hasperson", true);
             } else {
                 $template->assign("id", $id);
-                $template->assign("name", $getperson["name"]);
+                $template->assign("name", $getperson["name"]?? "");
                 $template->assign("wanted", $getperson["wanted"]);
                 $template->assign("wanted1", $getperson["wanted"]);
                 $template->assign("dead", !$getperson["isalive"]);
                 $template->assign("pstate", (!$getperson["isalive"] ? "dead" : ($getperson["wanted"] ? "wanted" : "")));
-                $template->assign("birthday", $getperson["birthday"]);
-                $template->assign("tel", $getperson["data"]["tel"]);
+                $template->assign("birthday", $getperson["birthday"]?? "");
+                $template->assign("tel", $getperson["data"]["tel"]?? "");
                 $template->assign("frac", $getperson["data"]["frac"] ?? "");
-                $template->assign("adress", $getperson["data"]["adress"]);
+                $template->assign("adress", $getperson["data"]["adress"]?? "");
                 $template->assign("note", $main->sonderzeichenhinzufügen($getperson["data"]["note"] ?? ""));
                 $file = "";
                 foreach (($getperson["data"]["files"]) as $key => $value) {
@@ -432,7 +432,7 @@ if ((int)$loginstatus === 1) {
                 $aktensys = new aktensys();
                 foreach (($getperson["data"]["akte"]) as $key) {
                     $aktensys->setId($key);
-                    if($aktensys->hasAccess((int)$_SESSION["access"])){
+                    if($aktensys->hasAccess((int)($_SESSION["access"] ?? 2))){
                         if (str_contains($key, "911")) {
                             $pd++;
                             $akte .= '<a class="btn btn-info" href="index.php?site=akte&id=' . $key . '">PD Akte #' . $pd . '</a>     ';

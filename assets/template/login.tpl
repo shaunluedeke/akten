@@ -55,40 +55,9 @@
             <h1>Webinterface von AktenSystem</h1>
             <br><br>
             <br>
+
             <div class="hover-table-layout"
                  style="width: 100%;position: absolute;top: 30%;left: 60%;transform: translate(-50%, 0%);">
-                <div class="listing-item">
-                    <figure class="image">
-                        <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px"/>
-                        <figcaption>
-                            <div class="caption">
-                                <h1>Akten ansehen</h1>
-                            </div>
-                        </figcaption>
-                    </figure>
-                    <div class="listing">
-                        <h3>Soviele wurden schon erstellt!</h3>
-                        <h3 class="num">{allakten}</h3>
-                        <a href="index.php?site=akten-all" class="logbtn">Alle ansehen</a>
-                    </div>
-                </div>
-                <br>
-                <div class="listing-item">
-                    <figure class="image">
-                        <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px"/>
-                        <figcaption>
-                            <div class="caption">
-                                <h1>Akten erstellen</h1>
-                            </div>
-                        </figcaption>
-                    </figure>
-                    <div class="listing">
-                        <h3>Erstelle eine Neue Akte!</h3>
-                        <h3>Was hat der schuft gemacht</h3>
-                        <a href="index.php?site=akten-create" class="logbtn">Akte Erstellen</a>
-                    </div>
-                </div>
-                <br>
                 <div class="listing-item">
                     <figure class="image">
                         <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px"/>
@@ -117,6 +86,40 @@
                         <a href="index.php?site=fine" class="logbtn">Alle ansehen</a>
                     </div>
                 </div>
+
+                <div class="listing-item">
+                    <figure class="image">
+                        <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px"/>
+                        <figcaption>
+                            <div class="caption">
+                                <h1>Akten ansehen</h1>
+                            </div>
+                        </figcaption>
+                    </figure>
+                    <div class="listing">
+                        <h3>Soviele wurden schon erstellt!</h3>
+                        <h3 class="num">{allakten}</h3>
+                        <a href="index.php?site=akten-all" class="logbtn">Alle ansehen</a>
+                    </div>
+                </div>
+
+                <div class="listing-item">
+                    <figure class="image">
+                        <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px"/>
+                        <figcaption>
+                            <div class="caption">
+                                <h1>Akten erstellen</h1>
+                            </div>
+                        </figcaption>
+                    </figure>
+                    <div class="listing">
+                        <h3>Erstelle eine Neue Akte!</h3>
+                        <h3>Was hat der schuft gemacht</h3>
+                        <a href="index.php?site=akten-create" class="logbtn">Akte Erstellen</a>
+                    </div>
+                </div>
+                <br>
+
             </div>
         </center>
     </div>
