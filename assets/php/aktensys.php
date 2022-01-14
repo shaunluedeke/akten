@@ -66,8 +66,10 @@ class aktensys
             }
             require_once(__DIR__."/../lib/discord/discord_auth.php");
             $webhook = new discord_webhook();
-            $webhook->setTitle("AktenSystem Delete");
-            $webhook->setTxt("Eine Akte wurde gelöscht! [Link](http://rpakte.de/index.php?site=akten-all)");
+            require_once(__DIR__."/fracsys.php");
+            $fracsys = new fracsys($this->get()["access"]);
+            $webhook->setTitle("AktenSystem Delete (".$fracsys->name().")");
+            $webhook->setTxt("Eine Akte wurde gelöscht von ".$_SESSION["name"]."! [Link](https://rpakte.de/index.php?site=akten-all)");
             $webhook->setColor(("ff0000"));
             $webhook->send();
             return $this->main->getSQL()->query("DELETE FROM `akten` WHERE `ID`='$this->id'");
@@ -96,11 +98,12 @@ class aktensys
             }
             $person->setID($pid);
             $person->addAkte($id);
-
+            require_once(__DIR__."/fracsys.php");
+            $fracsys = new fracsys($access);
             require_once(__DIR__."/../lib/discord/discord_auth.php");
             $webhook = new discord_webhook();
-            $webhook->setTitle("AktenSystem Add");
-            $webhook->setTxt("Eine Akte wurde hinzugefügt! [Link](http://rpakte.de/index.php?site=akte&id=".$id.")");
+            $webhook->setTitle("AktenSystem Add (".$fracsys->name().")");
+            $webhook->setTxt("Eine Akte wurde hinzugefügt von ".$_SESSION["name"]."! [Link](https://rpakte.de/index.php?site=akte&id=".$id.")");
             $webhook->setColor(("00ffff"));
             $webhook->send();
 
@@ -115,10 +118,12 @@ class aktensys
             return false;
         }
         try {
+            require_once(__DIR__."/fracsys.php");
+            $fracsys = new fracsys($this->get()["access"]);
             require_once(__DIR__."/../lib/discord/discord_auth.php");
             $webhook = new discord_webhook();
-            $webhook->setTitle("AktenSystem Update");
-            $webhook->setTxt("Eine Akte wurde geändert! [Link](http://rpakte.de/index.php?site=akte&id=".$this->id.")");
+            $webhook->setTitle("AktenSystem Update (".$fracsys->name().")");
+            $webhook->setTxt("Eine Akte wurde geändert von ".$_SESSION["name"]."! [Link](https://rpakte.de/index.php?site=akte&id=".$this->id.")");
             $webhook->setColor(("00ffff"));
             $webhook->send();
             return $this->main->getSQL()->query("UPDATE `akten` SET `Name`='$name',`Data`='" . json_encode($data, JSON_THROW_ON_ERROR) . "' WHERE `ID`='$this->id'");

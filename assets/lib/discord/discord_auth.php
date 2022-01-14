@@ -26,7 +26,6 @@ class discord_auth
                 "redirect_uri" => $this -> redirect,
                 "response_type" => 'code',
                 "scope" => discord_auth_config::$scope)));
-        die();
     }
 
     public function get_token ($code) {

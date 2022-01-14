@@ -483,7 +483,7 @@ if ((int)$loginstatus === 1) {
                 require_once(__DIR__."/assets/lib/discord/discord_auth.php");
                 $webhook = new discord_webhook();
                 $webhook->setTitle("Personenregister Add");
-                $webhook->setTxt($_POST["name"]." wurde hinzugefügt! [Link](http://rpakte.de/index.php?site=person&id=".$id.")");
+                $webhook->setTxt($_POST["name"]." wurde hinzugefügt von ".$_SESSION["name"]."! [Link](https://rpakte.de/index.php?site=person&id=".$id.")");
                 $webhook->setColor((  "00ffff"));
                 $webhook->send();
                 $person->setID($id);
@@ -529,7 +529,7 @@ if ((int)$loginstatus === 1) {
                     require_once(__DIR__."/assets/lib/discord/discord_auth.php");
                     $webhook = new discord_webhook();
                     $webhook->setTitle("Personenregister Update");
-                    $webhook->setTxt($getperson["name"]." wurde bearbeitet! [Link](http://rpakte.de/index.php?site=person&id=".$id.")");
+                    $webhook->setTxt($getperson["name"]." wurde bearbeitet von ".$_SESSION["name"]."! [Link](https://rpakte.de/index.php?site=person&id=".$id.")");
                     $webhook->setColor((  "00ffff"));
                     $webhook->send();
 

@@ -41,9 +41,11 @@ class bußgeld
         if(!isset($_SESSION)){session_start();}
         $this->access = $this->access === 0 ? (int)$_SESSION["access"] : $this->access;
         require_once(__DIR__."/../lib/discord/discord_auth.php");
+        require_once(__DIR__."/fracsys.php");
+        $fracsys = new fracsys($this->access);
         $webhook = new discord_webhook();
-        $webhook->setTitle("Bußgeld Hinzugefügt");
-        $webhook->setTxt("Ein Bußgeld wurde hinzugefügt! [Link](http://rpakte.de/index.php?site=fine)");
+        $webhook->setTitle("Bußgeld Hinzugefügt für das ".$fracsys->name());
+        $webhook->setTxt("Ein Bußgeld wurde hinzugefügt von ".$_SESSION["name"]."! [Link](https://rpakte.de/index.php?site=fine)");
         $webhook->setColor(("00ff00"));
         $webhook->send();
         $this->main->getSQL()->query("INSERT INTO `geldkatalog`(`ID`, `Paragraf`, `Name`, `Geld`, `Access`) VALUES ('$this->id','$paragraf','$name','$geld','$this->access')");
@@ -57,8 +59,10 @@ class bußgeld
 
         require_once(__DIR__."/../lib/discord/discord_auth.php");
         $webhook = new discord_webhook();
-        $webhook->setTitle("Bußgeld Edit");
-        $webhook->setTxt("Ein Bußgeld wurde geändert! [Link](http://rpakte.de/index.php?site=fine)");
+        require_once(__DIR__."/fracsys.php");
+        $fracsys = new fracsys($this->access);
+        $webhook->setTitle("Bußgeld Edit für das ".$fracsys->name());
+        $webhook->setTxt("Ein Bußgeld wurde geändert von ".$_SESSION["name"]."! [Link](https://rpakte.de/index.php?site=fine)");
         $webhook->setColor(("00ffff"));
         $webhook->send();
 
@@ -92,8 +96,8 @@ class bußgeld
             }
         } else {
             while ($row = mysqli_fetch_array($result)) {
-                $id = $row['ID'];
-                $a[$id]["id"] = $id;
+                $id = $row["Paragraf"];
+                $a[$id]["id"] = $row['ID'];
                 $a[$id]["paragraf"] = $row["Paragraf"];
                 $a[$id]["name"] = $row["Name"];
                 $a[$id]["geld"] = $row["Geld"];
