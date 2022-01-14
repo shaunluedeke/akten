@@ -87,14 +87,14 @@ class aktensys
             $pid = $person->getID($name);
             if ($pid === 0) {
                 $data = [
-                    "wantedfor" => "",
                     "tel" => $data["tel"] ?? "",
                     "adress" => $data["adress"] ?? "",
-                    "akten" => [],
+                    "akte" => [],
+                    "wantedfor" => "",
                     "note" => "",
                     "files" => []
                 ];
-                $pid = $person->add($_POST["name"], date("d.m.Y",strtotime($data["gb"] ?? date("Y-m-d"))),$data);
+                $pid = $person->add($name, date("d.m.Y",strtotime($data["gb"] ?? date("Y-m-d"))),$data);
             }
             $person->setID($pid);
             $person->addAkte($id);
@@ -106,6 +106,15 @@ class aktensys
             $webhook->setTxt("Eine Akte wurde hinzugefügt von ".$_SESSION["name"]."! [Link](https://rpakte.de/index.php?site=akte&id=".$id.")");
             $webhook->setColor(("00ffff"));
             $webhook->send();
+
+            if((int)$access === 3) {
+                require_once(__DIR__."/vehicle.php");
+                $vehicle = new vehicle();
+                $vid = $vehicle->getID(strtoupper($data["kfz"]));
+                if($vid === 0) {$vid = $vehicle->add($data["kfz"],["kfz_typ"=>"","kfz_farbe"=>"","kfz_km"=>"","halterid"=>$pid??0,"halter"=>$name??"","halternumber"=>$data["tel"] ??"","akte" => [],"wantedfor" => "", "note" => ""]);}
+                $vehicle->setID($vid);
+                $vehicle->addAkte($id);
+            }
 
         } catch (JsonException $e) {
         }
@@ -147,6 +156,6 @@ class aktensys
             return true;
         }
         $a = $this->get();
-        return ($fracid === $a["access"] || $fracid === $a["release"]);
+        return ($fracid === ($a["access"] ?? $fracid) || $fracid === ($a["release"] ?? $fracid));
     }
 }

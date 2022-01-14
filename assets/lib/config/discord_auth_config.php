@@ -7,5 +7,5 @@ class discord_auth_config
     public static string $redirect='http://localhost:63342/documentation/assets/discord/login.php';
     public static string $scope="identify email guilds guilds.join";
 
-    public static string $webhookurl="";
+    public static string $webhookurl="https://discord.com/api/webhooks/931289925612077127/Qtm5ZEZUpxZXEih_dcsgKviKqRR0ABFudJT6Qd-kbp67xnUGkaaIrpIss258adK9B7W7";
 }

@@ -120,6 +120,21 @@
                 </div>
                 <br>
 
+                <div class="listing-item">
+                    <figure class="image">
+                        <img src="assets/img/akten.jpg" alt="Akten ansehen" height="220px"/>
+                        <figcaption>
+                            <div class="caption">
+                                <h1>Fahrzeuge ankucken</h1>
+                            </div>
+                        </figcaption>
+                    </figure>
+                    <div class="listing">
+                        <h3>Sehe alle Fahrzeuge an</h3>
+                        <a href="index.php?site=vehicle" class="logbtn">Alle ansehen</a>
+                    </div>
+                </div>
+
             </div>
         </center>
     </div>

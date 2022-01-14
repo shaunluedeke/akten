@@ -33,6 +33,7 @@
                         <div class="form-group">
                             <input type="submit" value="Login" name="logi" class="btn float-right login_btn">
                         </div>
+                        <a href="https://discord.gg/ErVrEfSuvz" target="_blank" class="btn btn_success">Discord Server</a>
                     </form>
                 </div>
             </div>

@@ -77,7 +77,7 @@ if ((int)$loginstatus === 1) {
                     if ($key !== "creator") {
                         $akten_loop = [];
                         $akten_loop["key"] = $main->sonderzeichenhinzufügen($txt[$key] ?? "");
-                        $akten_loop["value"] = $main->sonderzeichenhinzufügen($value  ?? "");
+                        $akten_loop["value"] = $main->sonderzeichenhinzufügen($value ?? "");
                         $template->assign("akten_loop", $akten_loop);
                     }
                 }
@@ -95,7 +95,6 @@ if ((int)$loginstatus === 1) {
         case "akten-create":
         {
             if (isset($_POST["createakte"])) {
-                $access = $_GET['frac'] === "pd" ? "1" : "2";
                 $akten = new aktensys();
                 $dataarray = [];
                 foreach ($_POST as $key => $value) {
@@ -107,7 +106,7 @@ if ((int)$loginstatus === 1) {
                     }
                 }
                 $dataarray["creator"] = $_SESSION["name"];
-                $id = $akten->set($main->sonderzeichenentfernen($_POST["name"]), $access, $dataarray);
+                $id = $akten->set($main->sonderzeichenentfernen($_POST["name"]), $_SESSION["access"], $dataarray);
                 header("location: index.php?site=akte&id=$id");
             } else {
                 $getperson = [];
@@ -401,24 +400,24 @@ if ((int)$loginstatus === 1) {
             if ($id === 0) {
                 foreach ($getperson as $key => $value) {
                     $person_loop = [];
-                    $person_loop["id"] = $value["id"]?? "";
-                    $person_loop["name"] = $value["name"]?? "";
-                    $person_loop["date"] = $value["birthday"]?? "";
+                    $person_loop["id"] = $value["id"] ?? "";
+                    $person_loop["name"] = $value["name"] ?? "";
+                    $person_loop["date"] = $value["birthday"] ?? "";
                     $person_loop["wanted"] = $value["wanted"] ? '<p style="color: #ff0000">JA!</p>' : "Nein";
                     $template->assign("person_loop", $person_loop);
                 }
                 $template->assign("hasperson", true);
             } else {
                 $template->assign("id", $id);
-                $template->assign("name", $getperson["name"]?? "");
+                $template->assign("name", $getperson["name"] ?? "");
                 $template->assign("wanted", $getperson["wanted"]);
                 $template->assign("wanted1", $getperson["wanted"]);
                 $template->assign("dead", !$getperson["isalive"]);
                 $template->assign("pstate", (!$getperson["isalive"] ? "dead" : ($getperson["wanted"] ? "wanted" : "")));
-                $template->assign("birthday", $getperson["birthday"]?? "");
-                $template->assign("tel", $getperson["data"]["tel"]?? "");
+                $template->assign("birthday", $getperson["birthday"] ?? "");
+                $template->assign("tel", $getperson["data"]["tel"] ?? "");
                 $template->assign("frac", $getperson["data"]["frac"] ?? "");
-                $template->assign("adress", $getperson["data"]["adress"]?? "");
+                $template->assign("adress", $getperson["data"]["adress"] ?? "");
                 $template->assign("note", $main->sonderzeichenhinzufügen($getperson["data"]["note"] ?? ""));
                 $file = "";
                 foreach (($getperson["data"]["files"]) as $key => $value) {
@@ -428,22 +427,28 @@ if ((int)$loginstatus === 1) {
                 $akte = "";
                 $pd = 0;
                 $mc = 0;
+                $acls = 0;
                 require_once(__DIR__ . "/assets/php/aktensys.php");
                 $aktensys = new aktensys();
                 foreach (($getperson["data"]["akte"]) as $key) {
                     $aktensys->setId($key);
-                    if($aktensys->hasAccess((int)($_SESSION["access"] ?? 2))){
-                        if (str_contains($key, "911")) {
+                    if ($aktensys->hasAccess((int)($_SESSION["access"] ?? 3))) {
+                        if (str_starts_with($key, "911")) {
                             $pd++;
                             $akte .= '<a class="btn btn-info" href="index.php?site=akte&id=' . $key . '">PD Akte #' . $pd . '</a>     ';
-                        } else {
+                        }
+                        if (str_starts_with($key, "912")) {
                             $mc++;
                             $akte .= '<a class="btn btn-danger" href="index.php?site=akte&id=' . $key . '">MC Akte #' . $mc . '</a>     ';
+                        }
+                        if (str_starts_with($key, "444")) {
+                            $acls++;
+                            $akte .= '<a class="btn btn-warning" href="index.php?site=akte&id=' . $key . '">ACLS Akte #' . $acls . '</a>     ';
                         }
                     }
                 }
                 $template->assign("akte", $akte);
-                $template->assign("hasakte", $akte!=="");
+                $template->assign("hasakte", $akte !== "");
                 $template->assign("wantedfor", $getperson["data"]["wantedfor"]);
                 $template->assign("license", ($getperson["data"]["license"] ?? ""));
                 $template->assign("hasperson", false);
@@ -480,11 +485,11 @@ if ((int)$loginstatus === 1) {
                 ];
 
                 $id = $person->add($_POST["name"], date("d.m.Y", strtotime($_POST["gb"] ?? date("Y-m-d"))), $data);
-                require_once(__DIR__."/assets/lib/discord/discord_auth.php");
+                require_once(__DIR__ . "/assets/lib/discord/discord_auth.php");
                 $webhook = new discord_webhook();
                 $webhook->setTitle("Personenregister Add");
-                $webhook->setTxt($_POST["name"]." wurde hinzugefügt von ".$_SESSION["name"]."! [Link](https://rpakte.de/index.php?site=person&id=".$id.")");
-                $webhook->setColor((  "00ffff"));
+                $webhook->setTxt($_POST["name"] . " wurde hinzugefügt von " . $_SESSION["name"] . "! [Link](https://rpakte.de/index.php?site=person&id=" . $id . ")");
+                $webhook->setColor(("00ffff"));
                 $webhook->send();
                 $person->setID($id);
                 $person->setAlive($_POST["alive"] ?? false);
@@ -518,20 +523,20 @@ if ((int)$loginstatus === 1) {
                 }
                 $data = [
                     "wantedfor" => $_POST["wantedfor"] ?? "",
-                    "tel" => $_POST["tel"]?? "",
-                    "adress" => $_POST["adress"]?? "",
+                    "tel" => $_POST["tel"] ?? "",
+                    "adress" => $_POST["adress"] ?? "",
                     "akte" => $_POST["akten"] ?? $getperson["data"]["akte"] ?? [],
                     "files" => $fadd,
                     "license" => ($_POST["license"] ?? ""),
                     "note" => ($main->sonderzeichenentfernen($_POST["note"] ?? $getperson["data"]["note"] ?? "")),
                     "frac" => $_POST["frac"] ?? $getperson["data"]["frac"] ?? ""
                 ];
-                    require_once(__DIR__."/assets/lib/discord/discord_auth.php");
-                    $webhook = new discord_webhook();
-                    $webhook->setTitle("Personenregister Update");
-                    $webhook->setTxt($getperson["name"]." wurde bearbeitet von ".$_SESSION["name"]."! [Link](https://rpakte.de/index.php?site=person&id=".$id.")");
-                    $webhook->setColor((  "00ffff"));
-                    $webhook->send();
+                require_once(__DIR__ . "/assets/lib/discord/discord_auth.php");
+                $webhook = new discord_webhook();
+                $webhook->setTitle("Personenregister Update");
+                $webhook->setTxt($getperson["name"] . " wurde bearbeitet von " . $_SESSION["name"] . "! [Link](https://rpakte.de/index.php?site=person&id=" . $id . ")");
+                $webhook->setColor(("00ffff"));
+                $webhook->send();
 
                 $person->update($_POST["name"], date("d.m.Y", strtotime($_POST["gb"] ?? date("Y-m-d"))), $data);
                 $person->setAlive($_POST["alive"] ?? false);
@@ -555,6 +560,132 @@ if ((int)$loginstatus === 1) {
         }
 
         #endregion person
+
+        #region vehicle
+
+        case "vehicle":
+        {
+            require_once(__DIR__ . "/assets/php/vehicle.php");
+            $id = $_GET["id"] ?? 0;
+            $vehicle = new vehicle($id);
+            $getvehicle = $vehicle->get();
+            if (count($getvehicle) === 0) {
+                echo('<script>alert("Die Person wurde nicht gefunden!"); window.location="index.php";</script>');
+            }
+            if ($id === 0) {
+                foreach ($getvehicle as $key => $value) {
+                    $vehicle_loop = [];
+                    $vehicle_loop["id"] = $value["id"] ?? "";
+                    $vehicle_loop["number"] = $value["number"] ?? "";
+                    $vehicle_loop["type"] = $value["data"]["kfz_typ"] ?? "";
+                    $vehicle_loop["wanted"] = $value["wanted"] ? '<p style="color: #ff0000">JA!</p>' : "Nein";
+                    $template->assign("vehicle_loop", $vehicle_loop);
+                }
+                $template->assign("hasperson", true);
+            } else {
+                require_once(__DIR__ . "/assets/php/person.php");
+                $person = new person();
+                $pid = $person->getID($getvehicle["data"]["halter"]);
+                $template->assign("id", $id);
+                $template->assign("number", $getvehicle["number"] ?? "");
+                $template->assign("wanted", $getvehicle["wanted"]);
+                $template->assign("wanted1", $getvehicle["wanted"]);
+                $template->assign("pstate", ($getvehicle["wanted"] ? "wanted" : ""));
+                $template->assign("ownerindatabase", $pid !== 0);
+                $template->assign("ownerid", $pid);
+                $template->assign("owner", $main->sonderzeichenhinzufügen($getvehicle["data"]["halter"] ?? ""));
+                $template->assign("tel", $main->sonderzeichenhinzufügen($getvehicle["data"]["halternumber"] ?? ""));
+                $template->assign("type", $getvehicle["data"]["kfz_typ"] ?? "");
+                $template->assign("color", $getvehicle["data"]["kfz_farbe"] ?? "");
+                $template->assign("km", $getvehicle["data"]["kfz_km"]." km" ?? "");
+                $template->assign("note", $main->sonderzeichenhinzufügen($getvehicle["data"]["note"] ?? ""));
+                $akte = "";
+                require_once(__DIR__ . "/assets/php/aktensys.php");
+                $aktensys = new aktensys();
+                $acl = 0;
+                foreach (($getvehicle["data"]["akte"]) as $key) {
+                    $aktensys->setId($key);
+                    if ($aktensys->hasAccess((int)($_SESSION["access"] ?? 3))) {
+                        $acl++;
+                        $akte .= '<a class="btn btn-info" href="index.php?site=akte&id=' . $key . '">ACLS Akte #' . $acl . '</a>     ';
+                    }
+                }
+                $template->assign("akte", $akte);
+                $template->assign("hasakte", $akte !== "");
+                $template->assign("wantedfor", $getvehicle["data"]["wantedfor"] ?? "");
+                $template->assign("hasperson", false);
+            }
+            $template->parse("vehicle/vehicle.tpl");
+            break;
+        }
+
+        case "vehicle-add":
+        {
+            require_once(__DIR__ . "/assets/php/vehicle.php");
+            $vehicle = new vehicle();
+            if (isset($_POST["addvehicle"])) {
+                require_once(__DIR__ . "/assets/php/person.php");
+                $person = new person();
+                $pid = $person->getID($_POST["owner"]);
+                $data =["kfz_typ" => $_POST["type"] ?? "",
+                        "kfz_farbe" => $_POST["color"] ?? "",
+                        "kfz_km" => $_POST["km"] ?? "",
+                        "halterid" => $pid ?? 0,
+                        "halter" => $_POST["owner"] ?? "",
+                        "halternumber" => $_POST["tel"] ?? "",
+                        "akte" => [],
+                        "wantedfor" => $_POST["wantedfor"] ?? "",
+                        "note" => $main->sonderzeichenentfernen($_POST["note"] ?? "")];
+
+                $vehicle->add($_POST["number"], $data, $_POST["wanted"] ?? false);
+                echo('<script>alert("Dieses Fahrzeug wurde hinzugefügt!"); window.location="index.php?site=vehicle";</script>');
+            }
+            $template->parse("vehicle/vehicle-add.tpl");
+            break;
+        }
+
+        case "vehicle-edit":
+        {
+            require_once(__DIR__ . "/assets/php/vehicle.php");
+            $id = $_GET["id"] ?? 0;
+            $vehicle = new vehicle($id);
+            $getvehicle= $vehicle->get();
+            if (count($getvehicle) === 0) {
+                echo('<script>alert("Dieses Fahrzeug wurde nicht gefunden!"); window.location="index.php";</script>');
+            }
+            if (isset($_POST["editvehicle"])) {
+                require_once(__DIR__ . "/assets/php/person.php");$person = new person();
+                $pid = $person->getID($_POST["owner"]);
+                $data =["kfz_typ" => $_POST["type"] ?? "",
+                    "kfz_farbe" => $_POST["color"] ?? "",
+                    "kfz_km" => $_POST["km"] ?? "",
+                    "halterid" => $pid ?? 0,
+                    "halter" => $_POST["owner"] ?? "",
+                    "halternumber" => $_POST["tel"] ?? "",
+                    "akte" => [],
+                    "wantedfor" => $_POST["wantedfor"] ?? "",
+                    "note" => $main->sonderzeichenentfernen($_POST["note"] ?? "")];
+
+                $vehicle->update($_POST["number"], $data);
+                $vehicle->setWanted($_POST["wanted"] ?? false);
+                echo('<script>alert("Dieses Fahrzeug wurde bearbeitet!"); window.location="index.php?site=vehicle&id=' . $id . '";</script>');
+            }
+            $template->assign("id", $id);
+            $template->assign("number", $getvehicle["number"]);
+            $template->assign("owner", $getvehicle["data"]["halter"] ?? "");
+            $template->assign("tel", $getvehicle["data"]["halternumber"] ?? "555");
+            $template->assign("type", $getvehicle["data"]["kfz_typ"] ?? "");
+            $template->assign("wanted", $getvehicle["wanted"] ? "checked" : "");
+            $template->assign("color", ($getvehicle["data"]["kfz_farbe"] ?? ""));
+            $template->assign("km", ($getvehicle["data"]["kfz_km"] ?? ""));
+            $template->assign("note", ($main->sonderzeichenentfernen($getvehicle["data"]["note"] ?? "")));
+            $template->assign("wantedtext", $getvehicle["wanted"] ? "block" : "none");
+            $template->assign("wantedfor", $getvehicle["data"]["wantedfor"]);
+            $template->parse("vehicle/vehicle-edit.tpl");
+            break;
+        }
+
+        #endregion vehicle
 
         #region index
         case "pw-edit":

@@ -127,7 +127,7 @@
   </div>
   {if access}
     <div class="txtb">
-    <input type="number" name="access" max="2" min="0" required>
+    <input type="number" name="access" max="3" min="0" required>
     <span data-placeholder="Access"></span>
     </div>
   {/if access}

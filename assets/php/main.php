@@ -13,7 +13,8 @@ class main
                 $mysql->query("CREATE TABLE IF NOT EXISTS `personregister` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `Name` VARCHAR(200) NOT NULL , `Birthday` VARCHAR(200) NOT NULL , `Data` TEXT NOT NULL , `IsAlive` BOOLEAN NOT NULL DEFAULT '1', `Wanted` BOOLEAN NOT NULL DEFAULT '0', PRIMARY KEY (`ID`)) ENGINE = InnoDB;") &&
                 $mysql->query("CREATE TABLE IF NOT EXISTS `geldkatalog` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `Paragraf` VARCHAR(200) NOT NULL , `Name` VARCHAR(200) NOT NULL , `Geld` VARCHAR(200) NOT NULL , `Access` INT NOT NULL , PRIMARY KEY (`ID`)) ENGINE = InnoDB;")&&
                 $mysql->query("CREATE TABLE IF NOT EXISTS `apiaccess` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `IP` VARCHAR(200) NOT NULL , `Rang` INT(1) NOT NULL , `Token` VARCHAR(200) NOT NULL, `Blocked` BOOLEAN NOT NULL DEFAULT FALSE , PRIMARY KEY (`ID`)) ENGINE = InnoDB;")&&
-                $mysql->query("CREATE TABLE IF NOT EXISTS `frac` ( `Access` INT(16) NOT NULL AUTO_INCREMENT , `Name` VARCHAR(200) NOT NULL , `Textfile` VARCHAR(200) NOT NULL, `AktenID` INT(16) NOT NULL, PRIMARY KEY (`Access`)) ENGINE = InnoDB;");
+                $mysql->query("CREATE TABLE IF NOT EXISTS `frac` ( `Access` INT(16) NOT NULL AUTO_INCREMENT , `Name` VARCHAR(200) NOT NULL , `Textfile` VARCHAR(200) NOT NULL, `AktenID` INT(16) NOT NULL, PRIMARY KEY (`Access`)) ENGINE = InnoDB;")&&
+                $mysql->query("CREATE TABLE IF NOT EXISTS `vehicle` ( `ID` INT(16) NOT NULL AUTO_INCREMENT , `Number` VARCHAR(200) NOT NULL , `Data` TEXT NOT NULL , `Wanted` BOOLEAN NOT NULL DEFAULT FALSE , PRIMARY KEY (`ID`)) ENGINE = InnoDB");
     }
 
     public function login(string $username, string $password): bool
