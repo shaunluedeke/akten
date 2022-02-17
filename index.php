@@ -315,10 +315,20 @@ if ((int)$loginstatus === 1) {
         case "fine":
         {
             $fine = new bußgeld((int)$_SESSION["access"]);
-            $getfine = $fine->get();
             $txt = $fracsys->text("fine", $_SESSION["access"]);
             $template->assign("title", $txt["title"] ?? "Bußgeld");
             $template->assign("money", $txt["money"] ?? "Strafe");
+            $cat = $_POST["cat"] ?? "";
+            foreach ($fine->getCategory() as $key) {
+                if($cat !== $key) {
+                    $fine_cat_loop = array();
+                    $fine_cat_loop["name"] = $key;
+                    $fine_cat_loop["selected"] = $key;
+                    $template->assign("fine_catloop", $fine_cat_loop);
+                }
+            }
+            $template->assign("fine_all_cat", ($cat === "" || $cat === "all") ? "Kategorien": "Kategorie: ".$cat);
+            $getfine = $fine->get($cat);
             foreach ($getfine as $key => $value) {
                 $fine_loop = array();
                 $fine_loop["para"] = $main->sonderzeichenhinzufügen($value["paragraf"]);
@@ -344,7 +354,7 @@ if ((int)$loginstatus === 1) {
             if (isset($_POST["createfine"])) {
                 (int)$access = $_POST["frac"] ?? (int)$_SESSION["access"];
                 $fine = new bußgeld((int)$access);
-                $fine->add($_POST["paragraf"], $_POST["name"], $_POST["geld"]);
+                $fine->add($_POST["paragraf"], $_POST["name"], $_POST["geld"], ($_POST["cat"] ?? "all"));
                 echo('<script>alert("Der Bußgeld wurde hinzugefügt!"); window.location="index.php?site=fine";</script>');
             }
             $txt = $fracsys->text("fine-add", $_SESSION["access"]);
@@ -365,7 +375,7 @@ if ((int)$loginstatus === 1) {
                 $fine = new bußgeld(0, (int)$id);
                 $access = (int)$_SESSION["access"] === 0 ? (int)$fine->get()["access"] : (int)$_SESSION["access"];
                 $fine->set_access($access);
-                $fine->edit($_POST["paragraf"], $_POST["name"], $_POST["geld"]);
+                $fine->edit($_POST["paragraf"], $_POST["name"], $_POST["geld"], ($_POST["cat"] ?? "all"));
                 echo('<script>alert("Der Bußgeld wurde bearbeitet!"); window.location="index.php?site=fine";</script>');
             }
             $fine = new bußgeld(0, (int)$id);
@@ -597,7 +607,7 @@ if ((int)$loginstatus === 1) {
                 $template->assign("tel", $main->sonderzeichenhinzufügen($getvehicle["data"]["halternumber"] ?? ""));
                 $template->assign("type", $getvehicle["data"]["kfz_typ"] ?? "");
                 $template->assign("color", $getvehicle["data"]["kfz_farbe"] ?? "");
-                $template->assign("km", $getvehicle["data"]["kfz_km"]." km" ?? "");
+                $template->assign("km", $getvehicle["data"]["kfz_km"] . " km" ?? "");
                 $template->assign("note", $main->sonderzeichenhinzufügen($getvehicle["data"]["note"] ?? ""));
                 $akte = "";
                 require_once(__DIR__ . "/assets/php/aktensys.php");
@@ -627,15 +637,15 @@ if ((int)$loginstatus === 1) {
                 require_once(__DIR__ . "/assets/php/person.php");
                 $person = new person();
                 $pid = $person->getID($_POST["owner"]);
-                $data =["kfz_typ" => $_POST["type"] ?? "",
-                        "kfz_farbe" => $_POST["color"] ?? "",
-                        "kfz_km" => $_POST["km"] ?? "",
-                        "halterid" => $pid ?? 0,
-                        "halter" => $_POST["owner"] ?? "",
-                        "halternumber" => $_POST["tel"] ?? "",
-                        "akte" => [],
-                        "wantedfor" => $_POST["wantedfor"] ?? "",
-                        "note" => $main->sonderzeichenentfernen($_POST["note"] ?? "")];
+                $data = ["kfz_typ" => $_POST["type"] ?? "",
+                    "kfz_farbe" => $_POST["color"] ?? "",
+                    "kfz_km" => $_POST["km"] ?? "",
+                    "halterid" => $pid ?? 0,
+                    "halter" => $_POST["owner"] ?? "",
+                    "halternumber" => $_POST["tel"] ?? "",
+                    "akte" => [],
+                    "wantedfor" => $_POST["wantedfor"] ?? "",
+                    "note" => $main->sonderzeichenentfernen($_POST["note"] ?? "")];
 
                 $vehicle->add($_POST["number"], $data, $_POST["wanted"] ?? false);
                 echo('<script>alert("Dieses Fahrzeug wurde hinzugefügt!"); window.location="index.php?site=vehicle";</script>');
@@ -649,14 +659,15 @@ if ((int)$loginstatus === 1) {
             require_once(__DIR__ . "/assets/php/vehicle.php");
             $id = $_GET["id"] ?? 0;
             $vehicle = new vehicle($id);
-            $getvehicle= $vehicle->get();
+            $getvehicle = $vehicle->get();
             if (count($getvehicle) === 0) {
                 echo('<script>alert("Dieses Fahrzeug wurde nicht gefunden!"); window.location="index.php";</script>');
             }
             if (isset($_POST["editvehicle"])) {
-                require_once(__DIR__ . "/assets/php/person.php");$person = new person();
+                require_once(__DIR__ . "/assets/php/person.php");
+                $person = new person();
                 $pid = $person->getID($_POST["owner"]);
-                $data =["kfz_typ" => $_POST["type"] ?? "",
+                $data = ["kfz_typ" => $_POST["type"] ?? "",
                     "kfz_farbe" => $_POST["color"] ?? "",
                     "kfz_km" => $_POST["km"] ?? "",
                     "halterid" => $pid ?? 0,

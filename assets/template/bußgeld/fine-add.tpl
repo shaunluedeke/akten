@@ -61,15 +61,21 @@
                 <label for="exampleInputEmail1">Strafe</label>
                 <input type="text" class="form-control" name="geld" placeholder="Strafe" required>
             </div>
-            {if verwaltung}
+            <br>
             <div class="form-group">
-                <label for="exampleInputEmail1">Fraction</label>
-                <select class="form-select" name="frac">
-                    <option style="color: black;" value="0">Keine</option>
-                    <option style="color: black;" value="1">LSPD</option>
-                    <option style="color: black;" value="2">LSMC</option>
-                </select>
+                <label for="exampleInputEmail1">Katerogie</label>
+                <input type="text" class="form-control" name="cat" placeholder="Katerogie">
             </div>
+            {if verwaltung}
+                <br>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Fraction</label>
+                    <select class="form-select" name="frac">
+                        <option style="color: black;" value="0">Keine</option>
+                        <option style="color: black;" value="1">LSPD</option>
+                        <option style="color: black;" value="2">LSMC</option>
+                    </select>
+                </div>
             {/if verwaltung}
             <br>
             <br>

@@ -71,7 +71,7 @@
                     <td>{user_loop_fraction}</td>
                     <td><a class="btn btn-primary" href="index.php?site=user-check&name={user_loop_name}">INFO</a></td>
                 </tr>
-                {/loop}
+                {/loop user_loop}
 
                 </tbody>
             </table>

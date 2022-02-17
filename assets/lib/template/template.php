@@ -23,8 +23,6 @@ class template {
         $this->vars[$key] = $value;
     }
 
-
-    //abrufen
     public function parse( $template_file = ""): void
     {
         if($this->template_folder !== "") {

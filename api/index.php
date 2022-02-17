@@ -1,8 +1,10 @@
 <?php
+
 $ip = ($_SERVER['REMOTE_ADDR']) ?? "";
 if($ip===""){
     header('HTTP/1.0 502 Bad Gateway');
 }
+
 $method = $_SERVER['REQUEST_METHOD'] ?? "";
 require_once(__DIR__ .'/../assets/php/api.php');
 $api = new api($ip);
@@ -75,6 +77,27 @@ switch($method){
                     }
                     break;
                 }
+
+                case 'vehicle':{
+                    if($api->hasPermissions(1)) {
+                        header("Content-Type: application/json");
+                        $id = $_GET['id'] ?? 0;
+                        require_once(__DIR__ . "/../assets/php/vehicle.php");
+                        $vehicle = new vehicle($id);
+                        try {
+                            if(count($vehicle->get())>0) {
+                                echo json_encode($vehicle->get(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+                            }else{
+                                header('HTTP/1.1 503 Service Unavailable');
+                            }
+                        } catch (JsonException $e) {
+                            header('HTTP/1.1 500 Internal Server Error');
+                        }
+                    }else{
+                        header('HTTP/1.1 401 Unauthorized');
+                    }
+                    break;
+                }
                 default:
                     header('HTTP/1.0 400 Bad Request');
                     break;
@@ -94,8 +117,8 @@ switch($method){
                             $id=0;
                             if(isset($_POST['name'],$_POST["access"],$_POST["straftat"],$_POST["vernehmung"],$_POST["aufklarung"],$_POST["urteil"])){
                                 $date = $_POST['date'] ?? date("d.m.Y");$creator = $_POST['creator'] ?? "root";$gb = $_POST['gb'] ?? "";
-                                $tel = $_POST['tel'] ?? "";;
-                                $id = $aktensys->set($_POST['name'],$date,$_POST["access"],$creator,$gb,$tel,$_POST['straftat'],$_POST['vernehmung'],$_POST['aufklarung'],$_POST['urteil']);
+                                $tel = $_POST['tel'] ?? "";
+                                $id = $aktensys->set($_POST['name'],$date,$_POST["access"]);
                             }
                             if($id!==0){
                                 $aktensys->setId($id);
@@ -142,8 +165,30 @@ switch($method){
                             $person = new person();
                             try {
                                 $id = $person->add($_POST["name"], $_POST["birthday"], json_decode($_POST["data"], true, 512, JSON_THROW_ON_ERROR));
-                                $person->set_id($id);
+                                $person->setID($id);
                                 echo json_encode($person->get(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+                            } catch (JsonException $e) {
+                                header('HTTP/1.1 500 Internal Server Error');
+                            }
+                        }else{
+                            header('HTTP/1.0 400 Bad Request');
+                        }
+                    }else{
+                        header('HTTP/1.1 401 Unauthorized');
+                    }
+                    break;
+                }
+
+                case "vehicle":{
+                    if($api->hasPermissions(2)){
+                        header("Content-Type: application/json");
+                        if(isset($_POST["name"],$_POST["birthday"],$_POST["data"])) {
+                            require_once(__DIR__ . "/../assets/php/vehicle.php");
+                            $vehicle = new vehicle();
+                            try {
+                                $vehicle->add($_POST["name"], $_POST["birthday"], json_decode($_POST["data"], true, 512, JSON_THROW_ON_ERROR));
+                                $vehicle->setID($vehicle->getID($_POST["name"]));
+                                echo json_encode($vehicle->get(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
                             } catch (JsonException $e) {
                                 header('HTTP/1.1 500 Internal Server Error');
                             }
@@ -256,6 +301,37 @@ switch($method){
                     break;
                 }
 
+                case "vehicle":{
+                    if($api->hasPermissions(2)){
+                        header("Content-Type: application/json");
+                        if(isset($_POST["id"],$_POST["number"],$_POST["data"],$_POST["wanted"])) {
+                            require_once(__DIR__ . "/../assets/php/vehicle.php");
+                            $vehicle = new vehicle((int)$_POST["id"]);
+                            try {
+                                $vehicle->update($_POST["name"], json_decode($_POST["data"], true, 512, JSON_THROW_ON_ERROR));
+                                $vehicle->setWanted((bool)$_POST["wanted"]);
+                                echo json_encode($vehicle->get(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+                            } catch (JsonException $e) {
+                                header('HTTP/1.1 500 Internal Server Error');
+                            }
+                        }else if(isset($_POST["id"],$_POST["wanted"])){
+                            require_once(__DIR__ . "/../assets/php/vehicle.php");
+                            $vehicle = new vehicle((int)$_POST["id"]);
+                            $vehicle->setWanted((bool)$_POST["wanted"]);
+                            try {
+                                echo json_encode($vehicle->get(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+                            } catch (JsonException $e) {
+                                header('HTTP/1.1 500 Internal Server Error');
+                            }
+                        }else{
+                            header('HTTP/1.0 400 Bad Request');
+                        }
+                    }else{
+                        header('HTTP/1.1 401 Unauthorized');
+                    }
+                    break;
+                }
+
                 default:
                     header('HTTP/1.0 400 Bad Request');
                     break;
@@ -266,12 +342,32 @@ switch($method){
         case 'DELETE':{
             $action= $_GET['action'] ?? "";
             switch($action){
+
                 case "person":{
                     if($api->hasPermissions(3)){
                         if(isset($_GET["id"])){
                             require_once(__DIR__ . "/../assets/php/person.php");
                             $person = new person((int)$_GET["id"]);
                             if($person->delete()){
+                                header('HTTP/1.0 202 Accepted');
+                            }else{
+                                header('HTTP/1.0 500 Internal Server Error');
+                            }
+                        }else{
+                            header('HTTP/1.0 400 Bad Request');
+                        }
+                    }else{
+                        header('HTTP/1.1 401 Unauthorized');
+                    }
+                    break;
+                }
+
+                case "vehicle":{
+                    if($api->hasPermissions(3)){
+                        if(isset($_GET["id"])){
+                            require_once(__DIR__ . "/../assets/php/vehicle.php");
+                            $vehicle = new vehicle((int)$_GET["id"]);
+                            if($vehicle->delete()){
                                 header('HTTP/1.0 202 Accepted');
                             }else{
                                 header('HTTP/1.0 500 Internal Server Error');

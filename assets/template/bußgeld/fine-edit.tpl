@@ -67,6 +67,11 @@
         <input type="text" class="form-control" name="geld" value="{geld}" placeholder="Strafe" required>
       </div>
       <br>
+      <div class="form-group">
+        <label for="exampleInputEmail1">Katerogie</label>
+        <input type="text" class="form-control" name="cat" placeholder="Katerogie">
+      </div>
+      <br>
       <br>
       <button type="submit" name="editfine" class="btn btn-primary">Speichern</button>
     </form>

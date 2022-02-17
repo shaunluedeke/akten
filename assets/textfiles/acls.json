@@ -1,6 +1,6 @@
 {
   "akte": {
-    "title": "ALCS Akten",
+    "title": "ACLS Akten",
     "date": "Datum",
     "tel": "Durchwahl",
     "kfz": "Kennzeichen",
@@ -9,11 +9,11 @@
     "urteil": "Was muss beachtet werden?"
   },
   "akte-create": {
-    "title": "ALCS Akte erstellen",
+    "title": "ACLS Akte erstellen",
     "text": "<form action=\"index.php?site=akten-create&frac=acls\" method=\"POST\">\n<div class=\"form-group\">\n<label for=\"exampleInputEmail1\">Name</label>\n<input type=\"text\" class=\"form-control\" name=\"name\" value=\"{name}\" placeholder=\"Name\" required>\n</div>\n<br>\n<div class=\"form-group\">\n<label for=\"exampleInputEmail1\">Telefonnummer</label>\n<input type=\"text\" class=\"form-control\" name=\"tel\" value=\"{tel}\" placeholder=\"555\">\n</div><br>\n<div class=\"form-group\">\n<label for=\"exampleInputEmail1\">Wann ist es Passiert</label>\n\n<input type=\"date\" class=\"form-control\" name=\"date\" value=\"{date}\" required>\n\n</div>\n<br>\n\n<div class=\"form-group\">\n\n<label for=\"exampleInputEmail1\">Kennzeichen</label>\n\n<input type=\"text\" class=\"form-control\" name=\"kfz\" placeholder=\"Kennzeichen\" required>\n\n</div>\n<br>\n<div class=\"form-group\">\n\n<label for=\"exampleInputEmail1\">Was ist Passiert</label>\n\n<textarea class=\"form-control\" name=\"vorfall\" placeholder=\"Was ist Passiert\"></textarea>\n\n</div>\n<br>\n<div class=\"form-group\">\n\n<label for=\"exampleInputEmail1\">Wie war die Reparatur</label>\n\n<textarea class=\"form-control\" name=\"rep\" placeholder=\"Wie war die Kennzeichen\"></textarea>\n \n</div>\n<br>\n<div class=\"form-group\">\n<label for=\"exampleInputEmail1\">Was muss beachtet werden</label>\n\n<input type=\"text\" class=\"form-control\" name=\"urteil\" placeholder=\"Was muss beachtet werden\">\n\n</div>\n<br>\n<button type=\"submit\" name=\"createakte\" class=\"btn btn-primary\">Speichern</button>\n        </form>"
   },
   "fine": {
-    "title": "ALCS Preisliste",
+    "title": "ACLS Preisliste",
     "money": "Preis"
   },
   "fine-add": {

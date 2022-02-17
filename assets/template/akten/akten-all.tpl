@@ -59,7 +59,11 @@
                     <th scope="col" data-field="open">&Ouml;ffnen</th>
                 </tr>
                 </thead>
+
                 <tbody>
+                <tr aria-sort="none">
+                    <td colspan="6" style="text-align: center"><a class="btn btn-success" href="index.php?site=akten-create">Neue Akte</a></td>
+                </tr>
                 {loop akten_loop}
                 <tr>
                     <th scope="row">{akten_loop_id}</th>
@@ -80,6 +84,7 @@
     <div class="login-form" style="text-align: center;">
         <h3 style="color: black">Es gibt keine Akten!</h3>
         <br><br><br><br><br><br>
+        <a class="btn-success" href="index.php?site=akten-create">Neue Akte erstellen</a>
         <a class="btn btn-danger" href="index.php">Zurück</a>
     </div>
     {/if not hasakten}

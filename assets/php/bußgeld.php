@@ -34,54 +34,64 @@ class bußgeld
         $this->id = $id;
     }
 
-    public function add($paragraf, $name, $geld):int
+    public function add($paragraf, $name, $geld, $cat = "all"): void
     {
         require_once(__DIR__ . "/../lib/random/random.php");
-        $this->id = $this->id === 0 ? random::getInt() : $this->id;
-        if(!isset($_SESSION)){session_start();}
+        if (!isset($_SESSION)) {
+            session_start();
+        }
         $this->access = $this->access === 0 ? (int)$_SESSION["access"] : $this->access;
-        require_once(__DIR__."/../lib/discord/discord_auth.php");
-        require_once(__DIR__."/fracsys.php");
+        require_once(__DIR__ . "/../lib/discord/discord_auth.php");
+        require_once(__DIR__ . "/fracsys.php");
         $fracsys = new fracsys($this->access);
         $webhook = new discord_webhook();
-        $webhook->setTitle("Bußgeld Hinzugefügt für das ".$fracsys->name());
-        $webhook->setTxt("Ein Bußgeld wurde hinzugefügt von ".$_SESSION["name"]."! [Link](https://rpakte.de/index.php?site=fine)");
+        $webhook->setTitle("Bußgeld Hinzugefügt für das " . $fracsys->name());
+        $webhook->setTxt("Ein Bußgeld wurde hinzugefügt von " . $_SESSION["name"] . "! [Link](https://rpakte.de/index.php?site=fine)");
         $webhook->setColor(("00ff00"));
         $webhook->send();
-        $this->main->getSQL()->query("INSERT INTO `geldkatalog`(`ID`, `Paragraf`, `Name`, `Geld`, `Access`) VALUES ('$this->id','$paragraf','$name','$geld','$this->access')");
-        return $this->id;
+        $this->main->getSQL()->query("INSERT INTO `geldkatalog`(`Paragraf`, `Name`, `Category`, `Geld`, `Access`) VALUES ('$paragraf','$name','$cat','$geld','$this->access')");
     }
 
-    public function edit($paragraf, $name, $geld):bool
+    public function edit($paragraf, $name, $geld, $cat = "all"): bool
     {
-        if(!isset($_SESSION)){session_start();}
+        if (!isset($_SESSION)) {
+            session_start();
+        }
         $this->access = $this->access === 0 ? (int)$_SESSION["access"] : $this->access;
-
-        require_once(__DIR__."/../lib/discord/discord_auth.php");
+        require_once(__DIR__ . "/../lib/discord/discord_auth.php");
         $webhook = new discord_webhook();
-        require_once(__DIR__."/fracsys.php");
+        require_once(__DIR__ . "/fracsys.php");
         $fracsys = new fracsys($this->access);
-        $webhook->setTitle("Bußgeld Edit für das ".$fracsys->name());
-        $webhook->setTxt("Ein Bußgeld wurde geändert von ".$_SESSION["name"]."! [Link](https://rpakte.de/index.php?site=fine)");
+        $webhook->setTitle("Bußgeld Edit für das " . $fracsys->name());
+        $webhook->setTxt("Ein Bußgeld wurde geändert von " . $_SESSION["name"] . "! [Link](https://rpakte.de/index.php?site=fine)");
         $webhook->setColor(("00ffff"));
         $webhook->send();
 
-        return $this->main->getSQL()->query("UPDATE `geldkatalog` SET `Paragraf`='$paragraf',`Name`='$name',`Geld`='$geld',`Access`='$this->access' WHERE `ID`='$this->id'");
+        return $this->main->getSQL()->query("UPDATE `geldkatalog` SET `Paragraf`='$paragraf',`Category`='$cat',`Name`='$name',`Geld`='$geld',`Access`='$this->access' WHERE `ID`='$this->id'");
     }
 
-    public function delete():bool
+    public function delete(): bool
     {
         return $this->main->getSQL()->query("DELETE FROM `geldkatalog` WHERE `ID`='$this->id'");
     }
 
-    public function get():array{
+    public function get($cat=""): array
+    {
         $a = array();
+
+        if($cat==="" || !in_array($cat, $this->getCategory(0), true)){
+            $cat = "";
+        }
+
         $mysql = $this->main->getSQL();
-        if (($this->id !== 0) && $mysql->count("SELECT `ID` FROM `geldkatalog` ".($this->access===0?"":"WHERE `Access`='$this->access'"))< 1) {
+        if (($this->id !== 0) && $mysql->count("SELECT `ID` FROM `geldkatalog` " . ($this->access === 0 ? "" : "WHERE `Access`='$this->access'")) < 1) {
             return array();
         }
-        $result = ($mysql->result("SELECT * FROM `geldkatalog`" . ($this->id !== 0 ? " WHERE `ID`='$this->id'" :($this->access===0?"":" WHERE `Access`='$this->access'"))));
-        if($result===null){
+        $catsql1 = ($cat === "" ? "" : "AND `Category`='$cat' ");
+        $catsql2 = ($cat === "" ? "" : "WHERE `Category`='$cat' ");
+        $accesssql = ($this->access === 0 ? $catsql2 : " WHERE `Access`='$this->access'") . $catsql1;
+        $result = ($mysql->result("SELECT * FROM `geldkatalog` " . ($this->id !== 0 ? " WHERE `ID`='$this->id'" : $accesssql)));
+        if ($result === null) {
             return array();
         }
         if ($this->id !== 0) {
@@ -106,5 +116,33 @@ class bußgeld
         }
         return $a;
     }
+
+    #region category
+
+    public function getCategory($id=-1): array|string
+    {
+        $a = [];
+        $id = $id === -1 ? $this->id : $id;
+        $mysql = $this->main->getSQL();
+        if (($this->id !== 0) && $mysql->count("SELECT `ID` FROM `geldkatalog` " . ($this->access === 0 ? "" : "WHERE `Access`='$this->access'")) < 1) {
+            return "";
+        }
+        $result = ($mysql->result("SELECT `ID`,`Category` FROM `geldkatalog`" . ($id !== 0 ? " WHERE `ID`='$this->id'" : ($this->access === 0 ? "" : " WHERE `Access`='$this->access'"))));
+        if ($this->id !== 0) {
+            while ($row = mysqli_fetch_array($result)) {
+                return (string)$row["Category"];
+            }
+        }else {
+            while ($row = mysqli_fetch_array($result)) {
+                if(!in_array($row["Category"], $a, true)){
+                    $a[] = $row["Category"];
+                }
+            }
+        }
+
+        return $a;
+    }
+
+    #endregion
 
 }
