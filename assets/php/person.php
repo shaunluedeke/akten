@@ -84,18 +84,21 @@ class person
         return $mysql->query("DELETE FROM `personregister` WHERE `ID`='$this->id'");
     }
 
-    public function setAlive(bool $value = true):bool{
+    public function setAlive(bool $value = true,$id = 0,bool $sync = false):bool{
         $mysql = $this->main->getSQL();
-        $data = $this->get();
+        $data = $this->get($id);
+        $id = $id !== 0 ? $id : $this->id;
         if($data["isalive"]!==$value){
-            require_once(__DIR__."/../lib/discord/discord_auth.php");
-            $webhook = new discord_webhook();
-            $webhook->setTitle("Personenregister Update");
-            $webhook->setTxt($data["name"] ." ist ". ($value ? "am Leben!" : "Verstorben!"));
-            $webhook->setColor(($value ? "000000" : "FFFFFF"));
-            $webhook->send();
+            if(!$sync) {
+                require_once(__DIR__ . "/../lib/discord/discord_auth.php");
+                $webhook = new discord_webhook();
+                $webhook->setTitle("Personenregister Update");
+                $webhook->setTxt($data["name"] . " ist " . ($value ? "am Leben!" : "Verstorben!"));
+                $webhook->setColor(($value ? "000000" : "FFFFFF"));
+                $webhook->send();
+            }
         }
-        return $mysql->query("UPDATE `personregister` SET `IsAlive`='" . ($value ? "1" : "0") . "' WHERE `ID`='$this->id'");
+        return $mysql->query("UPDATE `personregister` SET `IsAlive`='" . ($value ? "1" : "0") . "' WHERE `ID`='$id'");
     }
 
     public function setWanted(bool $value=false):bool{
@@ -161,7 +164,7 @@ class person
 
     public function sync():bool{
         try{
-            $api = $this->main->sendAPIrequest("GET","?action=character");
+            $api = $this->main->sendAPIrequest("get","?action=character","https://ghostrp.eu/api/index.php");
             if(count($api)>0 && isset($api["status"])===false){
                 foreach($api as $key => $value){
                     if($this->main->getSQL()->count("SELECT * FROM `personregister` WHERE `Name`='".$value["charname"]."'")<1){
@@ -175,7 +178,8 @@ class person
                             "note" => "",
                             "files" => ([])
                         ];
-                        $this->add($value["charname"], date("d.m.Y", strtotime($value["birthdate"])), $data);
+                        $id = $this->add($value["charname"], date("d.m.Y", strtotime($value["birthdate"])), $data);
+                        $this->setAlive(!$value["death"],$id,true);
                     }
                 }
             }

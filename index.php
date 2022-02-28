@@ -405,7 +405,10 @@ if ((int)$loginstatus === 1) {
             $person = new person($id);
             $getperson = $person->get();
             if (count($getperson) === 0) {
-                echo('<script>alert("Die Person wurde nicht gefunden!"); window.location="index.php";</script>');
+                $person->sync();
+                if(count($person->get()) === 0) {
+                    echo('<script>alert("Die Person wurde nicht gefunden!"); window.location="index.php";</script>');
+                }
             }
             if ($id === 0) {
                 $person->sync();
