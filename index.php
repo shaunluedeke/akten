@@ -408,6 +408,7 @@ if ((int)$loginstatus === 1) {
                 echo('<script>alert("Die Person wurde nicht gefunden!"); window.location="index.php";</script>');
             }
             if ($id === 0) {
+                $person->sync();
                 foreach ($getperson as $key => $value) {
                     $person_loop = [];
                     $person_loop["id"] = $value["id"] ?? "";

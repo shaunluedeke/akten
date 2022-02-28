@@ -135,4 +135,41 @@ class main
 
         return $file_ary;
     }
+
+    public function sendAPIrequest($method, $data,$url = ""): array
+    {
+        $url = $url === "" ? "https://ghostrp.eu/api/index.php": $url;
+        $result = false;
+        $result1 = [];
+
+        if ($method === "get") {
+            $d = "";
+            if (is_array($data)) {
+                for ($i = 0, $iMax = count($data); $i < $iMax; $i + 2) {
+                    $d .= ($i === 0 ? "?" : "&") . $data[$i] . "=" . $data[$i + 1];
+                }
+            } else {
+                $d = $data;
+            }
+            $result = file_get_contents($url . $d);
+        } else
+            if ($method === "post") {
+                $options = array(
+                    'http' => array(
+                        'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                        'method' => 'POST',
+                        'content' => http_build_query($data)
+                    )
+                );
+                $result = file_get_contents($url, false, stream_context_create($options));
+            }
+
+        if ($result !== FALSE) {
+            try {
+                $result1 = (array)json_decode($result, true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException $e) {
+            }
+        }
+        return $result1;
+    }
 }
