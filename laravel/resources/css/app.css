@@ -1,0 +1,22 @@
+.footer{
+    border-top: #e3002e solid 4px;
+    background-color: var(--bs-body-bg) !important;
+    color: var(--bs-body-color) !important;
+    width: 100%;
+    height: 60px;
+    text-align: center;
+    font-size: 17px;
+    padding-top: 5px;
+    margin-top: 10%;
+    position: fixed;
+    bottom: 0;
+}
+
+.footer a{
+    color: #101010 !important;
+    text-decoration: none;
+}
+
+.footer a:hover{
+    color: #e3002e !important;
+}
